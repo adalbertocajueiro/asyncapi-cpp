@@ -1,0 +1,18 @@
+<div class="main-container">
+  <div class="tool-bar">
+    <button mat-stroked-button color="primary" (click)="fileInput.click()">Load AsyncAPI file</button>
+    <input style="display: none" type="file" (change)="onFileChanged($event)" #fileInput>
+  </div>
+  <div class="content-container">
+    <label>Content</label>
+    <div class="content">
+      <!-- pre>{{ documentContent | json}}</pre -->
+      <ngx-json-viewer [json]="documentContent" [expanded]="false"></ngx-json-viewer>
+    </div>
+    <div class="content">
+      <pre>{{cppText | json}}</pre>
+    </div>
+  </div>
+</div>
+
+<router-outlet></router-outlet>
