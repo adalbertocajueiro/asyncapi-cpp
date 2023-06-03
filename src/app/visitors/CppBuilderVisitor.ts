@@ -1,7 +1,6 @@
 import { Schema } from "@asyncapi/parser/esm/models/v2/schema";
 import { EnumItem, EnumType } from "../models/enum";
 import { AttributeType } from "../models/attribute";
-import { SchemaInterface } from "@asyncapi/parser";
 import { ClassType } from "../models/class";
 
 
@@ -41,7 +40,11 @@ export class CppBuilderVisitor {
         if(properties){
             for (var [idProp,valueProp] of Object.entries(properties)){
                 //console.log('property: ', idProp, (valueProp as Schema).type())
-                var att = new AttributeType(idProp, (valueProp as Schema).type()!.toString())
+                var attType = (valueProp as Schema).type()!.toString()
+                var att = new AttributeType(idProp, attType)
+                if(attType == 'array'){
+                    att.itemsType = ((valueProp as Schema).items() as Schema).type()?.toString()
+                }
                 attributes.push(att)
             }
         }

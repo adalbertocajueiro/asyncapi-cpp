@@ -146,7 +146,7 @@ components:
         coordinates:
           type: array
           items:
-            type: integer
+            type: number
     
     Trajectory:
       type: object

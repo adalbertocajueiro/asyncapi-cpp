@@ -10,7 +10,17 @@ export const TYPES_MAP:Map<string, string> = new Map<string,string>(
         ['number','double'],
         ['boolean','bool'],
         ['string','std::string'],
-        ['array','std::list']
+        ['array','std::vector']
+    ]
+)
+
+export const JSON_TYPES_MAP: Map<string, string> = new Map<string, string>(
+    [
+        ['integer', 'int'],
+        ['number', 'double'],
+        ['boolean', 'bool'],
+        ['string', 'std::string'],
+        ['array', 'json::array']
     ]
 )
 
@@ -20,6 +30,7 @@ export const DEFAULT_VALUES_MAP: Map<string, string> = new Map<string, string>(
         ['number', '0.0'],
         ['boolean', 'false'],
         ['string', '""'],
-        ['array', 'std::list']
+        ['array', 'std::vector']
     ]
 )
+
