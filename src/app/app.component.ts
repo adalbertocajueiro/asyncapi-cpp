@@ -4,7 +4,7 @@ import { AsyncAPIDocument } from '@asyncapi/parser/esm/models/v2/asyncapi';
 import { SchemasHandler } from './util/schemas-handler';
 import { LoadYamlService } from './services/load-yaml.service';
 import { CppBuilderVisitor } from './visitors/CppBuilderVisitor';
-import { visitNode } from './visitors/CppCodeVisitor';
+import { CppCodeVisitor, visitNode } from './visitors/CppCodeVisitor';
 
 const parser = new Parser();
 
@@ -43,14 +43,25 @@ export class AppComponent {
   }
 
   buildNodes(){
-    var nodes = []
     if (this.schemasHandler){
       this.schemasHandler.independentSchemas.forEach(sch => {
         var astBuilder = new CppBuilderVisitor()
+        var cppGenerator = new CppCodeVisitor()
         var node = astBuilder.buildObject(sch)
         if (node) {
-          console.log(visitNode(node))
-          
+          //console.log(visitNode(node))
+          console.log(cppGenerator.visitNode(node))
+        }
+
+      })
+
+      this.schemasHandler.dependentSchemas.forEach(sch => {
+        var astBuilder = new CppBuilderVisitor()
+        var cppGenerator = new CppCodeVisitor()
+        var node = astBuilder.buildObject(sch)
+        if (node) {
+          //console.log(visitNode(node))
+          console.log(cppGenerator.visitNode(node))
         }
 
       })

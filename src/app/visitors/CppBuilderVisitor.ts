@@ -44,6 +44,9 @@ export class CppBuilderVisitor {
                 var att = new AttributeType(idProp, attType)
                 if(attType == 'array'){
                     att.itemsType = ((valueProp as Schema).items() as Schema).type()?.toString()
+                    att.itemsTypeName = ((valueProp as Schema).items() as Schema).id()
+                } else if (attType == 'object'){
+                    att.attTypeName = (valueProp as Schema).id()
                 }
                 attributes.push(att)
             }
