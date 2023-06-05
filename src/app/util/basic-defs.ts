@@ -3,6 +3,9 @@ export const AsyncType: string[] = [
     'array', 'boolean', 'integer', 'number', 'string', 'object'
 ]
 
+export function isPrimitive(t:string){
+    return t == 'boolean' || t == 'integer' || t == 'number' || t == 'string' || t == 'double' || t == 'int' || t == 'bool'
+}
 //structure containing mapping of async api primitive types to c++ primitive types
 export const TYPES_MAP:Map<string, string> = new Map<string,string>(
     [

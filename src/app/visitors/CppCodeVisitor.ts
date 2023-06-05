@@ -3,7 +3,7 @@
 import { AttributeType } from '../models/attribute'
 import { ClassType } from '../models/class'
 import { EnumItem, EnumType } from '../models/enum'
-import { DEFAULT_VALUES_MAP, JSON_TYPES_MAP, TYPES_MAP } from '../util/basic-defs'
+import { DEFAULT_VALUES_MAP, isPrimitive, JSON_TYPES_MAP, TYPES_MAP } from '../util/basic-defs'
 
 export class CppCodeVisitor {
 
@@ -148,7 +148,7 @@ export class CppCodeVisitor {
         var result: string = ''
 
         result = result.concat(this.indent(indentLevel))
-        result = result.concat(classObj.className)
+        result = result.concat(classObj.className + '()')
         result = result.concat(this.newLine())
         result = result.concat(this.indent(indentLevel) + '{')
         result = result.concat(this.newLine())
@@ -168,7 +168,7 @@ export class CppCodeVisitor {
             }
   
             if (!defaultValue){
-                defaultValue = 'new ' + att.attTypeName + '()'
+                defaultValue = att.attTypeName + '()'
             }
             result = result.concat(this.indent(indentLevel) + 'this->' + att.attName + ' = ' + defaultValue + ';')
 
@@ -246,11 +246,14 @@ export class CppCodeVisitor {
                 result = result.concat(this.newLine() + this.indent(indentLevel) + '{')
                 indentLevel = indentLevel + 2
                 //se o tipo nao é objeto entao insere diretamente.
-                if (itemType != 'object') {
+                
+                if (isPrimitive(itemType!)) {
                     var varName = att.attName + '_json'
                     result = result.concat(this.newLine() + this.indent(indentLevel) + varName + '.push_back(item);')
                 } else {
                     //tem que converter todos os itens em json e coloca-los na variavel temporaria
+                    var varName = att.attName + '_json'
+                    result = result.concat(this.newLine() + this.indent(indentLevel) + varName + '.push_back(item.to_json());')
                 }
 
                 indentLevel = indentLevel - 2
@@ -352,7 +355,15 @@ export class CppCodeVisitor {
 
             } else {
                 //se o tipo do atributo nao necessita conversao entao preenche direto
-                result = result.concat(this.indent(indentLevel) + 'result.' + att.attName + ' = json_obj["' + att.attName + '"];')
+                console.log('ITEM ', att)
+                if(isPrimitive(att.attType)){
+                    result = result.concat(this.indent(indentLevel) + 'result.' + att.attName + ' = json_obj["' + att.attName + '"];')
+                } else {
+                    //verificar necessidade de ver se campo existe 
+                    //if (json_obj.contains("point")) por exemplo ????
+                    var typeName = att.attTypeName
+                    result = result.concat(this.indent(indentLevel) + 'result.' + att.attName + ' = ' + typeName + '::from_json(json_obj[' + '"' + att.attName + '"]);') 
+                }
             }
             /**
              * json coords = json_obj["coordinates"];
