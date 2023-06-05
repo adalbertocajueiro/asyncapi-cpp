@@ -100,9 +100,9 @@ export class CppCodeVisitor {
         result = result.concat(this.newLine())
         result = result.concat(this.buildConstructor(classObj, identLevel))
 
-        result = result.concat(this.newLine())
-        result = result.concat(this.newLine())
-        result = result.concat(this.buildEqualityOperator(classObj, identLevel))
+        //result = result.concat(this.newLine())
+        //result = result.concat(this.newLine())
+        //result = result.concat(this.buildEqualityOperator(classObj, identLevel))
 
         result = result.concat(this.newLine())
         result = result.concat(this.newLine())
