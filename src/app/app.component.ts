@@ -79,6 +79,8 @@ export class AppComponent {
     result = result.concat('#include <string>\n')
     result = result.concat('#include "nlohmann/json.hpp"\n\n')
 
+    result = result.concat('using json = nlohmann::json;\n\n')
+
     var cppGenerator = new CppCodeVisitor()
     this.independentNodes.forEach( node => {
       result = result.concat(cppGenerator.visitNode(node))
