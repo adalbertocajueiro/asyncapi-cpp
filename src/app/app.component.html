@@ -9,8 +9,8 @@
       <!-- pre>{{ documentContent | json}}</pre -->
       <ngx-json-viewer [json]="documentContent" [expanded]="false"></ngx-json-viewer>
     </div>
-    <div class="content">
-      <pre>{{cppText | json}}</pre>
+    <div>
+      <button mat-stroked-button color="primary" (click)="this.exportToCpp()"> Save file </button>
     </div>
   </div>
 </div>

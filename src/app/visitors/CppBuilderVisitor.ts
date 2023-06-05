@@ -16,7 +16,7 @@ export class CppBuilderVisitor {
             var items = schema.enum()
             node = new EnumType(schema.id(),this.parseEnumValues(items))
         } else if (schema.type() == 'object'){
-            console.log('encontrou classe: ', schema.id(), schema.properties())
+            //console.log('encontrou classe: ', schema.id(), schema.properties())
             var attributes = this.buildAttributes(schema.properties())
             node = new ClassType(schema.id(),attributes)
         } 

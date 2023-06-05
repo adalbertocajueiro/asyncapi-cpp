@@ -30,9 +30,22 @@ export class SchemasHandler {
                 } else {
                     this.independentSchemas.push(schema)
                 }
-            }
-            
+            }  
         })
+        this.independentSchemas.sort( (sch1, sch2) => {
+            var comparison = 0
+            if(sch1.enum()){
+                if(!sch2.enum()){
+                    comparison = -1
+                }
+            } else {
+                if(sch2.enum()){
+                    comparison = 1
+                }
+            }
+            return comparison
+        } )
+        this.dependentSchemas.sort((sch1, sch2) => sch1.id().localeCompare(sch2.id()))
         console.log('independent schemas', this.independentSchemas)
         console.log('dependent schemas', this.dependentSchemas)
     }
@@ -69,7 +82,7 @@ export class SchemasHandler {
                             }
                         }
                     }
-                    console.log(schema.id(), schema.json())
+                    //console.log(schema.id(), schema.json())
                 }
             } else {
                 if (schema.type() == 'array') {

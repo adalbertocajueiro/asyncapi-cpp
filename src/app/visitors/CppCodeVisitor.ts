@@ -7,6 +7,8 @@ import { DEFAULT_VALUES_MAP, isPrimitive, JSON_TYPES_MAP, TYPES_MAP } from '../u
 
 export class CppCodeVisitor {
 
+    includes:Set<string>[] = []
+
     constructor() {
     }
 
@@ -86,7 +88,7 @@ export class CppCodeVisitor {
         result = result.concat('{')
         result = result.concat(this.newLine())
 
-        console.log('classobj', classObj)
+        //console.log('classobj', classObj)
         result = result.concat('public:')
         result = result.concat(this.newLine())
         identLevel = 2
@@ -355,7 +357,7 @@ export class CppCodeVisitor {
 
             } else {
                 //se o tipo do atributo nao necessita conversao entao preenche direto
-                console.log('ITEM ', att)
+                //console.log('ITEM ', att)
                 if(isPrimitive(att.attType)){
                     result = result.concat(this.indent(indentLevel) + 'result.' + att.attName + ' = json_obj["' + att.attName + '"];')
                 } else {

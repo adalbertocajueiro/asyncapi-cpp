@@ -23,6 +23,9 @@ export class AppComponent {
   yamlContent:any
   schemasHandler?:SchemasHandler
 
+  independentNodes:any[] = []
+  dependentNodes:any[] = []
+
   cppText = ''
 
   constructor(private loadYamlService: LoadYamlService) {
@@ -36,9 +39,11 @@ export class AppComponent {
           this.schemasHandler = new SchemasHandler(apiDocument.components().schemas())
           this.documentContent = JSON.parse(JSON.stringify(parsed.document._json))
           this.buildNodes()
+          this.cppText = this.convertNodes()
+          
         }
       )
-    this.cppText = 'enum Signal { GET, SET }'
+    
     
   }
 
@@ -46,11 +51,10 @@ export class AppComponent {
     if (this.schemasHandler){
       this.schemasHandler.independentSchemas.forEach(sch => {
         var astBuilder = new CppBuilderVisitor()
-        var cppGenerator = new CppCodeVisitor()
         var node = astBuilder.buildObject(sch)
         if (node) {
-          //console.log(visitNode(node))
-          console.log(cppGenerator.visitNode(node))
+          this.independentNodes.push(node)
+          //console.log(cppGenerator.visitNode(node))
         }
 
       })
@@ -60,8 +64,8 @@ export class AppComponent {
         var cppGenerator = new CppCodeVisitor()
         var node = astBuilder.buildObject(sch)
         if (node) {
-          //console.log(visitNode(node))
-          console.log(cppGenerator.visitNode(node))
+          this.dependentNodes.push(node)
+          //console.log(cppGenerator.visitNode(node))
         }
 
       })
@@ -69,6 +73,25 @@ export class AppComponent {
     
   }
 
+  convertNodes(){
+    var result = ''
+
+    result = result.concat('#include <string>\n')
+    result = result.concat('#include "nlohmann/json.hpp"\n\n')
+
+    var cppGenerator = new CppCodeVisitor()
+    this.independentNodes.forEach( node => {
+      result = result.concat(cppGenerator.visitNode(node))
+      result = result.concat('\n\n')
+    })
+
+    this.dependentNodes.forEach(node => {
+      result = result.concat(cppGenerator.visitNode(node))
+      result = result.concat('\n\n')
+    })
+
+    return result
+  }
   onFileChanged(event: any) {
     this.selectedFile = event.target.files[0];
     const fileReader = new FileReader();
@@ -92,5 +115,18 @@ export class AppComponent {
         console.log(error);
       }
     }
+  }
+
+  exportToCpp(){
+    const data = this.cppText
+    const blob = new Blob([data], {
+      type: 'application/octet-stream'
+    });
+    const a = document.createElement('a')
+    var fileUrl = window.URL.createObjectURL(blob);
+    a.href = fileUrl
+    a.download = "definitions.cpp"
+    a.click();
+    URL.revokeObjectURL(fileUrl);
   }
 }
