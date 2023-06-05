@@ -4,7 +4,7 @@ import { AsyncAPIDocument } from '@asyncapi/parser/esm/models/v2/asyncapi';
 import { SchemasHandler } from './util/schemas-handler';
 import { LoadYamlService } from './services/load-yaml.service';
 import { CppBuilderVisitor } from './visitors/CppBuilderVisitor';
-import { CppCodeVisitor, visitNode } from './visitors/CppCodeVisitor';
+import { CppCodeVisitor} from './visitors/CppCodeVisitor';
 
 const parser = new Parser();
 
