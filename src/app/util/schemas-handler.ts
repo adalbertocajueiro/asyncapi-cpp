@@ -12,7 +12,7 @@ export class SchemasHandler {
     allSchemas?:Schemas
     independentSchemas:Schemas = new Schemas([])
     dependentSchemas:Schemas = new Schemas([])
-
+    orderedDependencies:Set<string> = new Set<string>()
 
 
     constructor(schemas:Schemas){
@@ -27,11 +27,14 @@ export class SchemasHandler {
             {
                 if (this.isDependent(schema.id(), schema)) {
                     this.dependentSchemas.push(schema)
+                    this.dependencies(schema)
                 } else {
                     this.independentSchemas.push(schema)
                 }
             }  
         })
+
+        
         this.independentSchemas.sort( (sch1, sch2) => {
             var comparison = 0
             if(sch1.enum()){
@@ -45,11 +48,44 @@ export class SchemasHandler {
             }
             return comparison
         } )
-        this.dependentSchemas.sort((sch1, sch2) => sch1.id().localeCompare(sch2.id()))
+        this.dependentSchemas.sort((sch1, sch2) => {
+            var result = 0
+            if(this.orderedDependencies.has(sch1.id())){
+                if (!this.orderedDependencies.has(sch2.id())){
+                    result = -1
+                }
+            } else {
+                if (this.orderedDependencies.has(sch2.id())) {
+                    result = 1
+                }
+            }
+            return result
+        })
+        //a ordenacao precisa ser diferente e baseada num grafo de dependencias
+        
+        console.log ('ordered dependencies', this.orderedDependencies)
         console.log('independent schemas', this.independentSchemas)
         console.log('dependent schemas', this.dependentSchemas)
     }
 
+    dependencies(schema:Schema){
+        if (schema.type() == 'array'){
+            var items = schema.items() as Schema[]
+            items.forEach(item => {
+                this.dependencies(item)
+            })
+        } else if(schema.type() == 'object'){
+            var properties = schema.properties()
+            if(properties){
+                var entries = Object.entries(properties)
+                entries.forEach( entry => {
+                    if(entry[1].type() == 'object'){
+                        this.orderedDependencies.add(entry[1].id())
+                    }
+                })
+            }
+        }
+    }
     private isDependent(parentID:string,schema:Schema):boolean{
         var result: boolean = false;
         
