@@ -5,9 +5,9 @@ import { ClassType } from '../models/class'
 import { EnumItem, EnumType } from '../models/enum'
 import { DEFAULT_VALUES_MAP, isPrimitive, JSON_TYPES_MAP, TYPES_MAP } from '../util/basic-defs'
 
-export class CppCodeVisitor {
+export class CppSchemaGeneratorVisitor {
 
-    includes:Set<string>[] = []
+    includes: Set<string>[] = []
 
     constructor() {
     }
@@ -126,14 +126,14 @@ export class CppCodeVisitor {
         var result: string = ''
         var apiType = attribute.attType
         var cppType = TYPES_MAP.get(apiType)!
-        
+
         if (apiType == 'array') {
             var itsType = TYPES_MAP.get(attribute.itemsType!)
-            if(!itsType){
+            if (!itsType) {
                 itsType = attribute.itemsTypeName
             }
             cppType = cppType.concat('<' + itsType + '>')
-        } else if (apiType == 'object'){
+        } else if (apiType == 'object') {
             cppType = attribute.attTypeName!
         }
         result = result.concat(this.indent(indentLevel))
@@ -168,8 +168,8 @@ export class CppCodeVisitor {
 
                 defaultValue = defaultValue.concat('<' + itsType + '>()')
             }
-  
-            if (!defaultValue){
+
+            if (!defaultValue) {
                 defaultValue = att.attTypeName + '()'
             }
             result = result.concat(this.indent(indentLevel) + 'this->' + att.attName + ' = ' + defaultValue + ';')
@@ -209,8 +209,8 @@ export class CppCodeVisitor {
             } else {
                 result = result.concat(';' + this.newLine())
             }
-            
-            
+
+
         }
 
         indentLevel = indentLevel - 2
@@ -248,7 +248,7 @@ export class CppCodeVisitor {
                 result = result.concat(this.newLine() + this.indent(indentLevel) + '{')
                 indentLevel = indentLevel + 2
                 //se o tipo nao é objeto entao insere diretamente.
-                
+
                 if (isPrimitive(itemType!)) {
                     var varName = att.attName + '_json'
                     result = result.concat(this.newLine() + this.indent(indentLevel) + varName + '.push_back(item);')
@@ -266,9 +266,9 @@ export class CppCodeVisitor {
             } else {
                 //se o tipo do atributo nao necessita conversao entao preenche direto
                 var jsonValue = att.attName
-                if (att.attType == 'object'){
+                if (att.attType == 'object') {
                     jsonValue = jsonValue.concat('.to_json()')
-                } 
+                }
                 result = result.concat(this.indent(indentLevel) + 'result["' + att.attName + '"] = this->' + jsonValue)
             }
             result = result.concat(';' + this.newLine())
@@ -347,7 +347,7 @@ export class CppCodeVisitor {
                 if (att.itemsType == 'object') {
                     itemTypeValue = att.itemsTypeName!
                     itemJsonValue = itemTypeValue + '::' + 'from_json(it.value())'
-                } 
+                }
                 result = result.concat(this.newLine() + this.indent(indentLevel) + itemTypeValue + ' item = ' + itemJsonValue + ';')
 
                 result = result.concat(this.newLine() + this.indent(indentLevel) + 'result.' + att.attName + '.push_back(item);')
@@ -358,13 +358,13 @@ export class CppCodeVisitor {
             } else {
                 //se o tipo do atributo nao necessita conversao entao preenche direto
                 //console.log('ITEM ', att)
-                if(isPrimitive(att.attType)){
+                if (isPrimitive(att.attType)) {
                     result = result.concat(this.indent(indentLevel) + 'result.' + att.attName + ' = json_obj["' + att.attName + '"];')
                 } else {
                     //verificar necessidade de ver se campo existe 
                     //if (json_obj.contains("point")) por exemplo ????
                     var typeName = att.attTypeName
-                    result = result.concat(this.indent(indentLevel) + 'result.' + att.attName + ' = ' + typeName + '::from_json(json_obj[' + '"' + att.attName + '"]);') 
+                    result = result.concat(this.indent(indentLevel) + 'result.' + att.attName + ' = ' + typeName + '::from_json(json_obj[' + '"' + att.attName + '"]);')
                 }
             }
             /**

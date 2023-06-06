@@ -10,7 +10,16 @@
       <ngx-json-viewer [json]="documentContent" [expanded]="false"></ngx-json-viewer>
     </div>
     <div>
-      <button mat-stroked-button color="primary" (click)="this.exportToCpp()"> Save file </button>
+      <button mat-stroked-button color="primary" (click)="this.exportToCpp()">Definitions</button>
+    </div>
+    <div>
+      <button mat-stroked-button color="primary" (click)="this.exportConversionFunctions()">Conversion functions</button>
+    </div>
+    <div>
+      <button mat-stroked-button color="primary" (click)="this.exportInitialMetaInfo()">Initial metainfo</button>
+    </div>
+    <div>
+      <button mat-stroked-button color="primary" (click)="this.exportTopics()">Topics</button>
     </div>
   </div>
 </div>

@@ -4,13 +4,13 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class LoadYamlService {
+export class LoadTextFileService {
 
-  constructor(private httpClient:HttpClient) { 
+  constructor(private httpClient: HttpClient) {
 
   }
 
-  loadYaml(path:string){
+  loadFileAsText(path: string) {
     return this.httpClient.get(path, { responseType: 'text' })
   }
 }

@@ -2,9 +2,11 @@ import { Component } from '@angular/core';
 import { Parser } from '@asyncapi/parser';
 import { AsyncAPIDocument } from '@asyncapi/parser/esm/models/v2/asyncapi';
 import { SchemasHandler } from './util/schemas-handler';
-import { LoadYamlService } from './services/load-yaml.service';
-import { CppBuilderVisitor } from './visitors/CppBuilderVisitor';
-import { CppCodeVisitor} from './visitors/CppCodeVisitor';
+import { LoadTextFileService } from './services/load-file.service';
+import { CppSchemaBuilderVisitor } from './visitors/CppSchemaBuilderVisitor';
+import { CppSchemaGeneratorVisitor } from './visitors/CppSchemaGeneratorVisitor';
+import { ChannelsHandler } from './util/channels-handler';
+import { InitialMetainfoHandler } from './util/initial-metainfo-handler';
 
 const parser = new Parser();
 
@@ -17,40 +19,66 @@ const parser = new Parser();
 export class AppComponent {
   title = 'asyncapi-cpp';
 
-  selectedFile: any
-  documentContent:any
+  apiDocument?: AsyncAPIDocument
+  documentContent: any
 
-  yamlContent:any
-  schemasHandler?:SchemasHandler
+  yamlContent: any
+  schemasHandler?: SchemasHandler
+  channelsHandler?: ChannelsHandler
+  metainfoHandler?: InitialMetainfoHandler
 
-  independentNodes:any[] = []
-  dependentNodes:any[] = []
+  conversionFunctionsContent: any
+  initialMetainfoContent: any
+
+  independentNodes: any[] = []
+  dependentNodes: any[] = []
 
   cppText = ''
 
-  constructor(private loadYamlService: LoadYamlService) {
-    this.loadYamlService.loadYaml('../assets/edscorbot-async-api.yaml').subscribe(
-        async data => {
+  constructor(private loadFileService: LoadTextFileService) {
+    this.loadConversionFunctions()
+    this.loadInitialMetainfo()
+    this.loadFileService.loadFileAsText('../assets/edscorbot-async-api.yaml').subscribe(
+      async data => {
         this.yamlContent = data.toLocaleString()
-          //console.log('content', this.yamlContent)
-          var parsed: any = await parser.parse(this.yamlContent)
-          console.log('parsed content', parsed)
-          var apiDocument: AsyncAPIDocument = parsed.document
-          this.schemasHandler = new SchemasHandler(apiDocument.components().schemas())
-          this.documentContent = JSON.parse(JSON.stringify(parsed.document._json))
-          this.buildNodes()
-          this.cppText = this.convertNodes()
-          
-        }
-      )
+        //console.log('content', this.yamlContent)
+        var parsed: any = await parser.parse(this.yamlContent)
+        console.log('parsed content', parsed)
+        this.apiDocument = parsed.document
+        this.schemasHandler = new SchemasHandler(this.apiDocument!.components().schemas())
+        this.channelsHandler = new ChannelsHandler(this.apiDocument!.allChannels())
+        this.metainfoHandler = new InitialMetainfoHandler(this.initialMetainfoContent)
+        this.documentContent = JSON.parse(JSON.stringify(parsed.document._json))
+        this.buildNodes()
+        this.cppText = this.convertNodes()
+
+      }
+    )
+
     
-    
+
   }
 
-  buildNodes(){
-    if (this.schemasHandler){
+  loadConversionFunctions() {
+    this.loadFileService.loadFileAsText('../assets/conversion-functions.tpl').subscribe(
+      async data => {
+        this.conversionFunctionsContent = data.toLocaleString()
+      }
+    )
+  }
+
+  loadInitialMetainfo() {
+    this.loadFileService.loadFileAsText('../assets/metainfo.tpl').subscribe(
+      async data => {
+        this.initialMetainfoContent = data.toLocaleString()
+      }
+    )
+  }
+
+  buildNodes() {
+    if (this.schemasHandler) {
       this.schemasHandler.independentSchemas.forEach(sch => {
-        var astBuilder = new CppBuilderVisitor()
+        var astBuilder = new CppSchemaBuilderVisitor()
         var node = astBuilder.buildObject(sch)
         if (node) {
           this.independentNodes.push(node)
@@ -60,8 +88,8 @@ export class AppComponent {
       })
 
       this.schemasHandler.dependentSchemas.forEach(sch => {
-        var astBuilder = new CppBuilderVisitor()
-        var cppGenerator = new CppCodeVisitor()
+        var astBuilder = new CppSchemaBuilderVisitor()
+        var cppGenerator = new CppSchemaGeneratorVisitor()
         var node = astBuilder.buildObject(sch)
         if (node) {
           this.dependentNodes.push(node)
@@ -70,10 +98,10 @@ export class AppComponent {
 
       })
     }
-    
+
   }
 
-  convertNodes(){
+  convertNodes() {
     var result = ''
 
     result = result.concat('#include <string>\n')
@@ -81,8 +109,8 @@ export class AppComponent {
 
     result = result.concat('using json = nlohmann::json;\n\n')
 
-    var cppGenerator = new CppCodeVisitor()
-    this.independentNodes.forEach( node => {
+    var cppGenerator = new CppSchemaGeneratorVisitor()
+    this.independentNodes.forEach(node => {
       result = result.concat(cppGenerator.visitNode(node))
       result = result.concat('\n\n')
     })
@@ -95,11 +123,11 @@ export class AppComponent {
     return result
   }
   onFileChanged(event: any) {
-    this.selectedFile = event.target.files[0];
+    var selectedFile = event.target.files[0];
     const fileReader = new FileReader();
-    if (this.selectedFile) {
+    if (selectedFile) {
 
-      fileReader.readAsText(this.selectedFile, "UTF-8");
+      fileReader.readAsText(selectedFile, "UTF-8");
 
       fileReader.onload = async () => {
         //console.log('file result', this.selectedFile, fileReader.result)
@@ -107,7 +135,7 @@ export class AppComponent {
           var parsed: any = await parser.parse(fileReader.result.toString())
           console.log('parsed content', parsed)
           var apiDocument: AsyncAPIDocument = parsed.document
-          
+
           this.documentContent = JSON.parse(JSON.stringify(parsed.document._json))//parsed.document._json
           //JSON.parse(JSON.stringify(
         }
@@ -119,7 +147,7 @@ export class AppComponent {
     }
   }
 
-  exportToCpp(){
+  exportToCpp() {
     const data = this.cppText
     const blob = new Blob([data], {
       type: 'application/octet-stream'
@@ -128,6 +156,45 @@ export class AppComponent {
     var fileUrl = window.URL.createObjectURL(blob);
     a.href = fileUrl
     a.download = "definitions.cpp"
+    a.click();
+    URL.revokeObjectURL(fileUrl);
+  }
+
+  exportConversionFunctions() {
+    const data = this.conversionFunctionsContent
+    const blob = new Blob([data], {
+      type: 'application/octet-stream'
+    });
+    const a = document.createElement('a')
+    var fileUrl = window.URL.createObjectURL(blob);
+    a.href = fileUrl
+    a.download = "conversion-functions.cpp"
+    a.click();
+    URL.revokeObjectURL(fileUrl);
+  }
+
+  exportInitialMetaInfo() {
+    const data = this.initialMetainfoContent
+    const blob = new Blob([data], {
+      type: 'application/octet-stream'
+    });
+    const a = document.createElement('a')
+    var fileUrl = window.URL.createObjectURL(blob);
+    a.href = fileUrl
+    a.download = "metainfo.cpp"
+    a.click();
+    URL.revokeObjectURL(fileUrl);
+  }
+
+  exportTopics() {
+    const data = this.channelsHandler?.buildTopics()!
+    const blob = new Blob([data], {
+      type: 'application/octet-stream'
+    });
+    const a = document.createElement('a')
+    var fileUrl = window.URL.createObjectURL(blob);
+    a.href = fileUrl
+    a.download = "topics.cpp"
     a.click();
     URL.revokeObjectURL(fileUrl);
   }
