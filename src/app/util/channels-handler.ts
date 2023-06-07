@@ -1,6 +1,4 @@
-import { ChannelInterface, SchemaInterface } from "@asyncapi/parser";
 import { Channels } from "@asyncapi/parser/esm/models/v2/channels";
-import { TopicType } from "../models/topic";
 import { CppChannelBuilderVisitor } from "../visitors/CppChannelBuilderVisitor";
 import { CppChannelGeneratorVisitor } from "../visitors/CppChannelGeneratorVisitor";
 
@@ -16,7 +14,6 @@ export class ChannelsHandler {
         this.channels = channels
         this.channelBuilder = new CppChannelBuilderVisitor()
         this.buildChannelNodes()
-        console.log('topics', this.topicsNodes)
         this.channelGenerator = new CppChannelGeneratorVisitor()
     }
 
@@ -63,5 +60,13 @@ export class ChannelsHandler {
         result = result.concat('\n}')
         return result
         
+    }
+
+    buildCommunicationLayer(){
+        return this.channelGenerator?.generateCommunicationLayer()
+    }
+
+    buildCommunicationLayerImpl() {
+        return this.channelGenerator?.generateCommunicationLayerImpl()
     }
 }

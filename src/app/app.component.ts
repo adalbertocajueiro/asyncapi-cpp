@@ -198,4 +198,34 @@ export class AppComponent {
     a.click();
     URL.revokeObjectURL(fileUrl);
   }
+
+  exportCommunicationLayer() {
+    this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    const data = this.channelsHandler?.buildCommunicationLayer()!
+    const blob = new Blob([data], {
+      type: 'application/octet-stream'
+    });
+    const a = document.createElement('a')
+    var fileUrl = window.URL.createObjectURL(blob);
+    a.href = fileUrl
+    a.download = "communication-layer.cpp"
+    a.click();
+    URL.revokeObjectURL(fileUrl); 
+    
+  }
+
+  exportCommunicationLayerImpl() {
+    this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    const data = this.channelsHandler?.buildCommunicationLayerImpl()!
+    const blob = new Blob([data], {
+      type: 'application/octet-stream'
+    });
+    const a = document.createElement('a')
+    var fileUrl = window.URL.createObjectURL(blob);
+    a.href = fileUrl
+    a.download = "communication-layer-impl.cpp"
+    a.click();
+    URL.revokeObjectURL(fileUrl);
+
+  }
 }
