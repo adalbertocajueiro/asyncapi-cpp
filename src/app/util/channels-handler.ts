@@ -31,7 +31,7 @@ export class ChannelsHandler {
         var result = this.channelGenerator?.generateInclude()
         result = result?.concat(this.channelGenerator?.generateVariables()!)
         this.topicsNodes.forEach(topic => {
-            result = result!.concat(this.channelGenerator?.generateDeclaration(topic)!)
+            result = result!.concat(this.channelGenerator?.generateTopicsDeclaration(topic)!)
         })
 
         result = result?.concat(this.buildSubscribeAllTopics())
@@ -39,36 +39,29 @@ export class ChannelsHandler {
         return result
     }
 
-    buildSubscribeAllTopics(){
+    buildSubscribeAllTopics() {
         var result = ''
 
         result = result.concat('\n\n' + 'void subscribe_all_topics()' + '\n')
         result = result.concat('{\n')
 
-        this.topicsNodes.forEach(topic => {
-            result = result!.concat('  mosquitto_subscribe(mosq,NULL,' + (topic as TopicType).topicName.toUpperCase().replaceAll('/','_') + '_TOPIC.c_str(),0);\n')
+        this.channelGenerator?.topicNames.forEach(topic => {
+            result = result!.concat('  mosquitto_subscribe(mosq,NULL,' + topic + '.c_str(),0);\n')
         })
-        
 
+        result = result.concat('\n')
+        result = result.concat('  std::cout << "Subscribed on topics: " << std::endl\n')
+        for (const [i,topic] of this.channelGenerator!.topicNames.entries()){
+            result = result!.concat('    << "  " + ' + topic + '<< std::endl')
+            if (i == this.channelGenerator!.topicNames.length - 1){
+                result = result.concat(';\n')
+            } else {
+                result = result.concat('\n')
+            }
+        }
+        
         result = result.concat('\n}')
         return result
-        /**
-         void subscribe_all_topics()
-{
-    mosquitto_subscribe(mosq, NULL, METAINFO_TOPIC.c_str(), 0);
-    mosquitto_subscribe(mosq, NULL, ROBOT_NAME_COMMANDS_TOPIC.c_str(), 0);
-    mosquitto_subscribe(mosq, NULL, ROBOT_NAME_MOVED_TOPIC.c_str(), 0);
-
-    std::cout << "Subscribed on topics: "
-              << std::endl
-              << "  " + METAINFO_TOPIC
-              << std::endl
-              << "  " + ROBOT_NAME_COMMANDS_TOPIC
-              << std::endl
-              << "  " + ROBOT_NAME_MOVED_TOPIC
-              << std::endl;
-}
-        }
-         */
+        
     }
 }

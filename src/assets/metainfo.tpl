@@ -8,7 +8,7 @@
  * for each motor
  *
  **/
-MetaInfoObject initial_metainfoobj()
+MetaInfoObject initial_metainfo()
 {
     MetaInfoObject result = MetaInfoObject();
 

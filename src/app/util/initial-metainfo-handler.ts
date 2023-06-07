@@ -1,6 +1,3 @@
-import { Channels } from "@asyncapi/parser/esm/models/v2/channels";
-import { CppChannelBuilderVisitor } from "../visitors/CppChannelBuilderVisitor";
-
 export class InitialMetainfoHandler {
 
     initialMetainfoContent:string = ''

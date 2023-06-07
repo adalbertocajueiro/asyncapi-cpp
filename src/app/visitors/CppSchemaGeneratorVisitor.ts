@@ -248,13 +248,12 @@ export class CppSchemaGeneratorVisitor {
                 result = result.concat(this.newLine() + this.indent(indentLevel) + '{')
                 indentLevel = indentLevel + 2
                 //se o tipo nao é objeto entao insere diretamente.
-
+                var varName = att.attName + '_json'
                 if (isPrimitive(itemType!)) {
-                    var varName = att.attName + '_json'
+                    
                     result = result.concat(this.newLine() + this.indent(indentLevel) + varName + '.push_back(item);')
                 } else {
                     //tem que converter todos os itens em json e coloca-los na variavel temporaria
-                    var varName = att.attName + '_json'
                     result = result.concat(this.newLine() + this.indent(indentLevel) + varName + '.push_back(item.to_json());')
                 }
 
@@ -262,6 +261,8 @@ export class CppSchemaGeneratorVisitor {
                 result = result.concat(this.newLine() + this.indent(indentLevel) + '}')
                 indentLevel = indentLevel - 2
                 result = result.concat(this.newLine() + this.indent(indentLevel) + '}')
+                result = result.concat(this.newLine() + this.indent(indentLevel))
+                result = result.concat('result["' + att.attName + '"] = ' + varName + ';')
 
             } else {
                 //se o tipo do atributo nao necessita conversao entao preenche direto
@@ -269,9 +270,9 @@ export class CppSchemaGeneratorVisitor {
                 if (att.attType == 'object') {
                     jsonValue = jsonValue.concat('.to_json()')
                 }
-                result = result.concat(this.indent(indentLevel) + 'result["' + att.attName + '"] = this->' + jsonValue)
+                result = result.concat(this.indent(indentLevel) + 'result["' + att.attName + '"] = this->' + jsonValue + ';')
             }
-            result = result.concat(';' + this.newLine())
+            
         }
         result = result.concat(this.newLine())
 
