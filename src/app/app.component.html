@@ -3,29 +3,46 @@
     <button mat-stroked-button color="primary" (click)="fileInput.click()">Load AsyncAPI file</button>
     <input style="display: none" type="file" (change)="onFileChanged($event)" #fileInput>
   </div>
-  <div class="content-container">
-    <label>Content</label>
-    <div class="content">
-      <!-- pre>{{ documentContent | json}}</pre -->
-      <ngx-json-viewer [json]="documentContent" [expanded]="false"></ngx-json-viewer>
+  <div class="content-container">  
+    <div class="left-panel">
+      <label>Tree view:</label>
+      <div class="content">
+        <!-- pre>{{ documentContent | json}}</pre -->
+        <ngx-json-viewer [json]="documentContent" [expanded]="false" style="overflow:auto!important;"></ngx-json-viewer>
+      </div>
     </div>
-    <div>
-      <button mat-stroked-button color="primary" (click)="this.exportToCpp()">Definitions</button>
-    </div>
-    <div>
-      <button mat-stroked-button color="primary" (click)="this.exportConversionFunctions()">Conversion functions</button>
-    </div>
-    <div>
-      <button mat-stroked-button color="primary" (click)="this.exportInitialMetaInfo()">Initial metainfo</button>
-    </div>
-    <div>
-      <button mat-stroked-button color="primary" (click)="this.exportTopics()">Topics</button>
-    </div>
-    <div>
-      <button mat-stroked-button color="primary" (click)="this.exportCommunicationLayer()">Communication layer</button>
-    </div>
-    <div>
-      <button mat-stroked-button color="primary" (click)="this.exportCommunicationLayerImpl()">Communication layer implementation</button>
+    <div class="right-panel">
+      <label>Select items for code generation</label>
+      <mat-button-toggle-group appearance="legacy" name="fontStyle" aria-label="Font Style" multiple>
+        <mat-button-toggle value="definitions" (click)="definitionsClicked()">Definitions</mat-button-toggle>
+        <mat-button-toggle value="conversion-functions" (click)="conversionFunctionsClicked()">Functions</mat-button-toggle>
+        <mat-button-toggle value="metainfo" (click)="metainfoClicked()">Metainfo</mat-button-toggle>
+        <mat-button-toggle value="topics" (click)="topicsClicked()">Topics</mat-button-toggle>
+        <mat-button-toggle value="communication-layer" (click)="communicationLayerClicked()">Comm. Layer</mat-button-toggle>
+        <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()">Comm. Impl</mat-button-toggle>
+      </mat-button-toggle-group>
+      <app-code-list [addItemSubject]="this.addItemSubject"></app-code-list>
+      <!-- div class="buttons">
+        <div>
+          <button mat-stroked-button color="primary" (click)="this.exportToCpp()">Definitions</button>
+        </div>
+        <div>
+          <button mat-stroked-button color="primary" (click)="this.exportConversionFunctions()">Conversion functions</button>
+        </div>
+        <div>
+          <button mat-stroked-button color="primary" (click)="this.exportInitialMetaInfo()">Metainfo</button>
+        </div>
+        <div>
+          <button mat-stroked-button color="primary" (click)="this.exportTopics()">Topics</button>
+        </div>
+        <div>
+          <button mat-stroked-button color="primary" (click)="this.exportCommunicationLayer()">Comm. Layer</button>
+        </div>
+        <div>
+          <button mat-stroked-button color="primary" (click)="this.exportCommunicationLayerImpl()">Comm. Layer
+            Impl</button>
+        </div>
+      </div -->
     </div>
   </div>
 </div>

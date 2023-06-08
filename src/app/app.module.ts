@@ -6,11 +6,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
+import { CodeListComponent } from './components/code-list/code-list.component';
+import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CodeListComponent,
+    CodeListItemComponent
   ],
   imports: [
     BrowserModule,
@@ -18,6 +23,7 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
     BrowserAnimationsModule,
     HttpClientModule,
     MatButtonModule,
+    MatButtonToggleModule,
     NgxJsonViewerModule
   ],
   providers: [],

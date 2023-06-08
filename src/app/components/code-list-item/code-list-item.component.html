@@ -1,0 +1,4 @@
+<div class="container" (click)="itemClicked()" [ngClass]="!expanded?'collapsed':''">
+    <pre *ngIf="!expanded">{{this.item.label}}</pre>
+    <pre *ngIf="expanded">{{this.item.content}}</pre>
+</div>

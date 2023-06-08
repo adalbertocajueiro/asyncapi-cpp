@@ -1,0 +1,18 @@
+.container{
+    display: flex;
+    width: 100%;
+    max-height: 300px;
+    overflow: auto!important;
+    background-color: rgb(242, 240, 240);
+    border: 1px solid lightgray;
+    &:hover{
+        cursor: pointer;
+    }
+    pre{
+        white-space: pre-wrap;
+    }
+}
+
+.collapsed{
+    height: 40px;
+}

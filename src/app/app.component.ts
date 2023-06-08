@@ -7,6 +7,8 @@ import { CppSchemaBuilderVisitor } from './visitors/CppSchemaBuilderVisitor';
 import { CppSchemaGeneratorVisitor } from './visitors/CppSchemaGeneratorVisitor';
 import { ChannelsHandler } from './util/channels-handler';
 import { InitialMetainfoHandler } from './util/initial-metainfo-handler';
+import { Subject } from 'rxjs';
+import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
 
 const parser = new Parser();
 
@@ -32,6 +34,8 @@ export class AppComponent {
 
   independentNodes: any[] = []
   dependentNodes: any[] = []
+
+  addItemSubject:Subject<any> = new Subject<any>()
 
   cppText = ''
 
@@ -145,6 +149,50 @@ export class AppComponent {
         console.log(error);
       }
     }
+  }
+
+  definitionsClicked(){
+    var item = new CodeListItemComponent()
+    item.content = this.cppText
+    item.label = 'definitions'
+    this.addItemSubject.next(item)
+  }
+
+  conversionFunctionsClicked() {
+    var item = new CodeListItemComponent()
+    item.content = this.conversionFunctionsContent
+    item.label = 'conversion-functions'
+    this.addItemSubject.next(item)
+  }
+
+  metainfoClicked() {
+    var item = new CodeListItemComponent()
+    item.content = this.initialMetainfoContent
+    item.label = 'metainfo'
+    this.addItemSubject.next(item)
+  }
+
+  topicsClicked() {
+    var item = new CodeListItemComponent()
+    item.content = this.channelsHandler?.buildTopics()!
+    item.label = 'topics'
+    this.addItemSubject.next(item)
+  }
+
+  communicationLayerClicked() {
+    var item = new CodeListItemComponent()
+    this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    item.content =this.channelsHandler?.buildCommunicationLayer()!
+    item.label = 'communication-layer'
+    this.addItemSubject.next(item)
+  }
+
+  communicationLayerImplClicked() {
+    var item = new CodeListItemComponent()
+    this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    item.content = this.channelsHandler?.buildCommunicationLayerImpl()!
+    item.label = 'communication-layer-impl'
+    this.addItemSubject.next(item)
   }
 
   exportToCpp() {
