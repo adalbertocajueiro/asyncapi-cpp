@@ -28,6 +28,8 @@
     "@asyncapi/parser": "^2.0.0",
     "@npmcli/fs": "^3.1.0",
     "fs": "^0.0.1-security",
+    "jszip": "^3.10.1",
+    "material-icons": "^1.13.8",
     "ngx-json-viewer": "^3.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

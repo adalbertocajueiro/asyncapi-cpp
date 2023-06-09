@@ -9,6 +9,7 @@ import { ChannelsHandler } from './util/channels-handler';
 import { InitialMetainfoHandler } from './util/initial-metainfo-handler';
 import { Subject } from 'rxjs';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
+import JSZip from 'jszip';
 
 const parser = new Parser();
 
@@ -275,5 +276,26 @@ export class AppComponent {
     a.click();
     URL.revokeObjectURL(fileUrl);
 
+  }
+
+  exportToZip(){
+    const definitionsContent = this.cppText
+    const conversionFunctionsContent = this.conversionFunctionsContent
+    var zip = new JSZip();
+    zip.file("definitions.cpp", definitionsContent);
+    zip.file("conversion-functions.cpp", conversionFunctionsContent);
+    zip.generateAsync({ type: 'blob' }).then( content => {
+      if(content){
+        const blob = new Blob([content], {
+          type: 'application/octet-stream'
+        });
+        const a = document.createElement('a')
+        var fileUrl = window.URL.createObjectURL(blob);
+        a.href = fileUrl
+        a.download = "generated.zip"
+        a.click();
+        URL.revokeObjectURL(fileUrl);
+      }
+    })
   }
 }

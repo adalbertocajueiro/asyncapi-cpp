@@ -10,6 +10,9 @@
         <!-- pre>{{ documentContent | json}}</pre -->
         <ngx-json-viewer [json]="documentContent" [expanded]="false" style="overflow:auto!important;"></ngx-json-viewer>
       </div>
+      <div>
+        <button mat-stroked-button color="primary" (click)="this.exportToZip()">download zip</button>
+      </div>
     </div>
     <div class="right-panel">
       <label>Select items for code generation</label>

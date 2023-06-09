@@ -1,4 +1,4 @@
-<div class="container" (click)="itemClicked()" [ngClass]="!expanded?'collapsed':''">
-    <pre *ngIf="!expanded">{{this.item.label}}</pre>
-    <pre *ngIf="expanded">{{this.item.content}}</pre>
+<div class="container"  [ngClass]="!expanded?'collapsed':''">
+    <mat-icon *ngIf="!expanded" matTooltip="Show content" matTooltipPosition="left" (click)="itemClicked()">expand_more</mat-icon><pre *ngIf="!expanded">{{this.item.label}}</pre>
+    <mat-icon *ngIf="expanded" matTooltip="Hide content" matTooltipPosition="left" (click)="itemClicked()">expand_less</mat-icon><pre *ngIf="expanded">{{this.item.content}}</pre>
 </div>

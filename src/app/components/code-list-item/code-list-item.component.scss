@@ -1,19 +1,25 @@
 .container{
-    display: block;
+    display: flex;
     width: 100%;
-
-    overflow: auto!important;
     background-color: rgb(242, 240, 240);
     border: 1px solid lightgray;
     max-height: 300px;
     transition: max-height 0.5s ease-in;
+    box-shadow: 2px 2px 3px darkgrey;
+    margin-top: 5px;
+    overflow:auto!important;
     
-    &:hover{
-        cursor: pointer;
-    }
     pre{
+        width: 98%;
         white-space: pre-wrap;
-        margin-left: 5px;
+    }
+    mat-icon{
+        width: 25px;
+        &:hover {
+            cursor: pointer;
+        }
+        transform: translateY(10px);
+        color: darkgray;
     }
     
 }

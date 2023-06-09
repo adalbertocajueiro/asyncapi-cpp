@@ -23,14 +23,18 @@
     flex-direction: column;
     width: 50%;
     padding: 5px;
-    
+    resize: horizontal;
+    overflow: auto;
 }
 .right-panel {
     display: flex;
     flex-direction: column;
     width: 50%;
+    
     padding: 5px;
-
+    resize: horizontal;
+    //border: 1px solid darkgreen;
+    overflow: auto;
     .buttons{
         display: flex;
         justify-content: space-between;
