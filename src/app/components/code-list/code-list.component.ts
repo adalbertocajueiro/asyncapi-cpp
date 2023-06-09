@@ -17,7 +17,7 @@ export class CodeListComponent implements OnInit{
     this.addItemSubject?.subscribe(
       {
         next: (res) => { 
-          
+          console.log('item clicked', res)
           var index:number = this.items.findIndex( item => item.label == res.label)
           if(index == -1){
             this.items.push(res)

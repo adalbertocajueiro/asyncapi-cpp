@@ -1,18 +1,26 @@
 .container{
-    display: flex;
+    display: block;
     width: 100%;
-    max-height: 300px;
+
     overflow: auto!important;
     background-color: rgb(242, 240, 240);
     border: 1px solid lightgray;
+    max-height: 300px;
+    transition: max-height 0.5s ease-in;
+    
     &:hover{
         cursor: pointer;
     }
     pre{
         white-space: pre-wrap;
+        margin-left: 5px;
     }
+    
 }
 
 .collapsed{
+    max-height: 40px;
     height: 40px;
+    transition: max-height 0.5s ease-out;
 }
+
