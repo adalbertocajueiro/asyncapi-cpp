@@ -7,7 +7,6 @@
     <div class="left-panel">
       <label>Tree view:</label>
       <div class="content">
-        <!-- pre>{{ documentContent | json}}</pre -->
         <ngx-json-viewer [json]="documentContent" [expanded]="false" style="overflow:auto!important;"></ngx-json-viewer>
       </div>
       <div>
@@ -24,28 +23,9 @@
         <mat-button-toggle value="communication-layer" (click)="communicationLayerClicked()">Comm. Layer</mat-button-toggle>
         <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()">Comm. Impl</mat-button-toggle>
       </mat-button-toggle-group>
-      <app-code-list [addItemSubject]="this.addItemSubject"></app-code-list>
-      <!-- div class="buttons">
-        <div>
-          <button mat-stroked-button color="primary" (click)="this.exportToCpp()">Definitions</button>
-        </div>
-        <div>
-          <button mat-stroked-button color="primary" (click)="this.exportConversionFunctions()">Conversion functions</button>
-        </div>
-        <div>
-          <button mat-stroked-button color="primary" (click)="this.exportInitialMetaInfo()">Metainfo</button>
-        </div>
-        <div>
-          <button mat-stroked-button color="primary" (click)="this.exportTopics()">Topics</button>
-        </div>
-        <div>
-          <button mat-stroked-button color="primary" (click)="this.exportCommunicationLayer()">Comm. Layer</button>
-        </div>
-        <div>
-          <button mat-stroked-button color="primary" (click)="this.exportCommunicationLayerImpl()">Comm. Layer
-            Impl</button>
-        </div>
-      </div -->
+      <app-code-list 
+        [addItemSubject]="this.addItemSubject"
+        (onDownloadClicked)="this.export($event)"></app-code-list>
     </div>
   </div>
 </div>

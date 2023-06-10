@@ -23,45 +23,31 @@ export class AppComponent {
   title = 'asyncapi-cpp';
 
   apiDocument?: AsyncAPIDocument
+  parsedDocument?:any
   documentContent: any
 
   yamlContent: any
   schemasHandler?: SchemasHandler
   channelsHandler?: ChannelsHandler
   metainfoHandler?: InitialMetainfoHandler
-
+  
+  definitionsContent:any
   conversionFunctionsContent: any
-  initialMetainfoContent: any
+  metainfoContent: any
+  topicsContent:any
+  communicationLayerContent:any
+  communicationLayerImplContent:any
 
   independentNodes: any[] = []
   dependentNodes: any[] = []
 
   addItemSubject:Subject<any> = new Subject<any>()
 
-  cppText = ''
+  
 
   constructor(private loadFileService: LoadTextFileService) {
     this.loadConversionFunctions()
-    this.loadInitialMetainfo()
-    this.loadFileService.loadFileAsText('../assets/edscorbot-async-api.yaml').subscribe(
-      async data => {
-        this.yamlContent = data.toLocaleString()
-        //console.log('content', this.yamlContent)
-        var parsed: any = await parser.parse(this.yamlContent)
-        console.log('parsed content', parsed)
-        this.apiDocument = parsed.document
-        this.schemasHandler = new SchemasHandler(this.apiDocument!.components().schemas())
-        this.channelsHandler = new ChannelsHandler(this.apiDocument!.allChannels())
-        this.metainfoHandler = new InitialMetainfoHandler(this.initialMetainfoContent)
-        this.documentContent = JSON.parse(JSON.stringify(parsed.document._json))
-        this.buildNodes()
-        this.cppText = this.convertNodes()
-
-      }
-    )
-
-    
-
+    this.loadMetainfo()
   }
 
   loadConversionFunctions() {
@@ -72,10 +58,10 @@ export class AppComponent {
     )
   }
 
-  loadInitialMetainfo() {
+  loadMetainfo() {
     this.loadFileService.loadFileAsText('../assets/metainfo.tpl').subscribe(
       async data => {
-        this.initialMetainfoContent = data.toLocaleString()
+        this.metainfoContent = data.toLocaleString()
       }
     )
   }
@@ -87,7 +73,6 @@ export class AppComponent {
         var node = astBuilder.buildObject(sch)
         if (node) {
           this.independentNodes.push(node)
-          //console.log(cppGenerator.visitNode(node))
         }
 
       })
@@ -98,9 +83,7 @@ export class AppComponent {
         var node = astBuilder.buildObject(sch)
         if (node) {
           this.dependentNodes.push(node)
-          //console.log(cppGenerator.visitNode(node))
         }
-
       })
     }
 
@@ -137,11 +120,10 @@ export class AppComponent {
       fileReader.onload = async () => {
         //console.log('file result', this.selectedFile, fileReader.result)
         if (fileReader.result) {
-          var parsed: any = await parser.parse(fileReader.result.toString())
-          console.log('parsed content', parsed)
-          var apiDocument: AsyncAPIDocument = parsed.document
+          this.yamlContent = fileReader.result.toString()
+          this.parseYamlContent()
 
-          this.documentContent = JSON.parse(JSON.stringify(parsed.document._json))//parsed.document._json
+          this.documentContent = JSON.parse(JSON.stringify(this.parsedDocument.document._json))//parsed.document._json
           //JSON.parse(JSON.stringify(
         }
 
@@ -152,9 +134,25 @@ export class AppComponent {
     }
   }
 
+  async parseYamlContent(){
+    this.parsedDocument = await parser.parse(this.yamlContent)
+    console.log('parsed content', this.parsedDocument)
+
+    this.apiDocument = this.parsedDocument.document
+    this.schemasHandler = new SchemasHandler(this.apiDocument!.components().schemas())
+    this.channelsHandler = new ChannelsHandler(this.apiDocument!.allChannels())
+    this.metainfoHandler = new InitialMetainfoHandler(this.metainfoContent)
+    this.buildNodes()
+    this.topicsContent = this.channelsHandler?.buildTopics()
+    this.communicationLayerContent = this.channelsHandler?.buildCommunicationLayer()!
+    this.communicationLayerImplContent = this.channelsHandler?.buildCommunicationLayerImpl()!
+    this.documentContent = JSON.parse(JSON.stringify(this.parsedDocument.document._json))
+    this.definitionsContent = this.convertNodes()
+  }
+
   definitionsClicked(){
     var item = new CodeListItemComponent()
-    item.content = this.cppText
+    item.content = this.definitionsContent
     item.label = 'definitions'
     this.addItemSubject.next(item)
   }
@@ -168,36 +166,39 @@ export class AppComponent {
 
   metainfoClicked() {
     var item = new CodeListItemComponent()
-    item.content = this.initialMetainfoContent
+    item.content = this.metainfoContent
     item.label = 'metainfo'
     this.addItemSubject.next(item)
   }
 
   topicsClicked() {
     var item = new CodeListItemComponent()
-    item.content = this.channelsHandler?.buildTopics()!
+    //item.content = this.channelsHandler?.buildTopics()!
+    item.content = this.topicsContent
     item.label = 'topics'
     this.addItemSubject.next(item)
   }
 
   communicationLayerClicked() {
     var item = new CodeListItemComponent()
-    this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    item.content =this.channelsHandler?.buildCommunicationLayer()!
+    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    //item.content =this.channelsHandler?.buildCommunicationLayer()!
+    item.content = this.communicationLayerContent
     item.label = 'communication-layer'
     this.addItemSubject.next(item)
   }
 
   communicationLayerImplClicked() {
     var item = new CodeListItemComponent()
-    this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    item.content = this.channelsHandler?.buildCommunicationLayerImpl()!
+    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    //item.content = this.channelsHandler?.buildCommunicationLayerImpl()!
+    item.content = this.communicationLayerImplContent
     item.label = 'communication-layer-impl'
     this.addItemSubject.next(item)
   }
 
-  exportToCpp() {
-    const data = this.cppText
+  exportDefinitions() {
+    const data = this.definitionsContent
     const blob = new Blob([data], {
       type: 'application/octet-stream'
     });
@@ -223,7 +224,7 @@ export class AppComponent {
   }
 
   exportInitialMetaInfo() {
-    const data = this.initialMetainfoContent
+    const data = this.metainfoContent
     const blob = new Blob([data], {
       type: 'application/octet-stream'
     });
@@ -236,7 +237,8 @@ export class AppComponent {
   }
 
   exportTopics() {
-    const data = this.channelsHandler?.buildTopics()!
+    //const data = this.channelsHandler?.buildTopics()!
+    const data = this.topicsContent
     const blob = new Blob([data], {
       type: 'application/octet-stream'
     });
@@ -249,8 +251,9 @@ export class AppComponent {
   }
 
   exportCommunicationLayer() {
-    this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    const data = this.channelsHandler?.buildCommunicationLayer()!
+    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    //const data = this.channelsHandler?.buildCommunicationLayer()!
+    const data = this.communicationLayerContent
     const blob = new Blob([data], {
       type: 'application/octet-stream'
     });
@@ -264,8 +267,9 @@ export class AppComponent {
   }
 
   exportCommunicationLayerImpl() {
-    this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    const data = this.channelsHandler?.buildCommunicationLayerImpl()!
+    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    //const data = this.channelsHandler?.buildCommunicationLayerImpl()!
+    const data = this.communicationLayerImplContent
     const blob = new Blob([data], {
       type: 'application/octet-stream'
     });
@@ -278,12 +282,37 @@ export class AppComponent {
 
   }
 
+  export(event: CodeListItemComponent){
+    switch(event.label){
+      case 'definitions':
+        this.exportDefinitions()
+        break
+      case 'conversion-functions':
+        this.exportConversionFunctions()
+        break
+      case 'metainfo':
+        this.exportInitialMetaInfo()
+        break
+      case 'topics':
+        this.exportTopics()
+        break
+      case 'communication-layer':
+        this.exportCommunicationLayer()
+        break
+      case 'communication-layer-impl':
+        this.exportCommunicationLayerImpl()
+        break
+    }
+  }
+
   exportToZip(){
-    const definitionsContent = this.cppText
-    const conversionFunctionsContent = this.conversionFunctionsContent
     var zip = new JSZip();
-    zip.file("definitions.cpp", definitionsContent);
-    zip.file("conversion-functions.cpp", conversionFunctionsContent);
+    zip.file("definitions.cpp", this.definitionsContent);
+    zip.file("conversion-functions.cpp", this.conversionFunctionsContent);
+    zip.file("metainfo.cpp", this.metainfoContent);
+    zip.file("topics.cpp", this.topicsContent);
+    zip.file("communication-layer.cpp", this.communicationLayerContent);
+    zip.file("communication-layer-impl.cpp", this.communicationLayerImplContent);
     zip.generateAsync({ type: 'blob' }).then( content => {
       if(content){
         const blob = new Blob([content], {

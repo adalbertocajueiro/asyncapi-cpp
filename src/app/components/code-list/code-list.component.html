@@ -1,6 +1,7 @@
 <div class="container">
     <app-code-list-item  *ngFor="let item of items" 
-        [item]="item">
+        [item]="item"
+        (onDownloadClicked)="this.onDownloadClicked.emit($event)">
 
     </app-code-list-item>
 </div>

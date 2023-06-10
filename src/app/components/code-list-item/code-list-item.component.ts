@@ -21,9 +21,15 @@ export class CodeListItemComponent {
   @Output()
   click:EventEmitter<CodeListItemComponent> = new EventEmitter<CodeListItemComponent>()
 
+  @Output()
+  onDownloadClicked: EventEmitter<CodeListItemComponent> = new EventEmitter<CodeListItemComponent>()
+
   itemClicked(){
-    console.log('this item',this)
     this.expanded = !this.expanded
     this.click.emit(this)
+  }
+
+  downloadClicked(){
+    this.onDownloadClicked.emit(this.item)
   }
 }
