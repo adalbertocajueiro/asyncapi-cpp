@@ -12,12 +12,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { CodeListComponent } from './components/code-list/code-list.component';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
+import { HeaderComponent } from './components/header/header.component';
+import { HomeComponent } from './pages/home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CodeListComponent,
-    CodeListItemComponent
+    CodeListItemComponent,
+    HeaderComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
