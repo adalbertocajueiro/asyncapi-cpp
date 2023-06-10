@@ -89,7 +89,7 @@ export class CppChannelGeneratorVisitor {
 
         //add message callback code
         result = result.concat('void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message)\n')
-        result = result.concat('{')
+        result = result.concat('{\n')
         for( const [i,topic] of this.topicNames.entries()){
             if( i == 0) {
                 result = result.concat('  if (std::strcmp(message->topic,' + topic + '.c_str()) == 0)\n')
