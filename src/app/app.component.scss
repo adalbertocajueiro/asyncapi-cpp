@@ -1,3 +1,5 @@
+@import "../theme.scss";
+
 .main-container{
     display: flex;
     flex-direction: column;
@@ -5,7 +7,7 @@
         min-width: 100vw;
         padding: 0px;
         height: 100vh;
-        //background-color: map-get($map: $light-primary, $key: 50);
+        background-color: map-get($map: $light-primary, $key: 50);
 
     .header {
             display: block;
@@ -17,7 +19,6 @@
         display: flex;
         width: 100%;
         height: 100%;
-        border: 1px dotted purple;
         .left{
             display: flex;
             width: 60px;
@@ -26,50 +27,94 @@
         }
         .content{
             display: flex;
-            height: 100%;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%!important;
             width: 100%;
-            border: 2px dashed green;
+
+            .tool-bar {
+                    display: flex;
+                    width: 100%;
+                    height: 40px;
+                    align-items: center;
+                    padding: 5px;
+            
+                    .message {
+                        display: flex;
+                        justify-content: center;
+                        width: 80%;
+                        color: rgb(141, 139, 139)
+                    }
+                }
         }
         
     }
 }
-.tool-bar{
-    display: flex;
-    width: 100%;
-    height: 40px;
-    align-items: center;
-    padding: 5px;
-}
+
 .content-container{
     display: flex;
     flex-direction: row;
     padding: 5px;
     font-size: 14px;
-    width: 100%;
+    width: 99%;
+    height: 100%;
 }
 .left-panel{
     display: flex;
     flex-direction: column;
-    width: 50%;
+    //flex-grow: 1;
+    width: 35%;
+    //max-width: 35%;
+    //min-width: 20%;
+    max-height: 650px;
     padding: 5px;
-    resize: horizontal;
-    overflow: auto;
+    //resize: horizontal;
+    overflow: hidden;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    span{
+        display: flex;
+        justify-content: center;
+        text-transform: uppercase;
+    }
+    .line{
+        margin-top: 5px;
+        font-weight: 300;
+        color: black;
+    }
+    .metainfo{
+        display: flex;
+        flex-direction: column;
+        font-weight: 500;  
+        .value{
+            font-weight: 500;
+            color: rgb(186, 65, 65);
+        } 
+    }
 }
 .right-panel {
     display: flex;
     flex-direction: column;
-    width: 50%;
-    
+    //flex-grow: 1;
+    //max-width: 62%;
+    width: 65%;
+    margin-left: 5px;
+    max-height: 650px;
     padding: 5px;
-    resize: horizontal;
-    //border: 1px solid darkgreen;
-    overflow: auto;
+    //resize: horizontal;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    span {
+            display: flex;
+            justify-content: center;
+            text-transform: uppercase;
+        }
     .buttons{
         display: flex;
         justify-content: space-between;
     }
 }
-.content{
+.content1{
     display: flex;
     justify-content: center;
     width: 98%;
@@ -88,6 +133,13 @@ span::before {
     white-space: pre-line;
 }
 :host ::ng-deep .ngx-json-viewer{
-    width:98%;
+    margin-right: 5px;
+    padding-left: 5px;
+    min-width:98%;
+    max-width: 98%;
+    max-height: 600px;
     overflow: auto!important;
+}
+button{
+    color: rgb(186, 65, 65)!important;
 }

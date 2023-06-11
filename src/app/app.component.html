@@ -3,26 +3,43 @@
     <app-header></app-header>
   </div>
   <div class="left-and-content">
-    <div class="left">
-
-    </div>
+    <div class="left"></div>
     <div class="content">
       <div class="tool-bar">
-        <button mat-stroked-button color="primary" (click)="fileInput.click()">Load AsyncAPI file</button>
+        <button mat-stroked-button color="warn" (click)="fileInput.click()" >
+          <mat-icon fontSet="material-icons-outlined" >upload</mat-icon>
+            Load AsyncAPI file</button>
         <input style="display: none" type="file" (change)="onFileChanged($event)" #fileInput>
+
+        <div class="message" *ngIf="!this.apiDocument"><label>No specification file loaded. Please select a valid Async API YAML file</label></div>
       </div>
       <div class="content-container">
         <div class="left-panel">
-          <label>Tree view:</label>
-          <div class="content">
-            <ngx-json-viewer [json]="documentContent" [expanded]="false" style="overflow:auto!important;"></ngx-json-viewer>
+          <span>Specification details</span>
+          <div class="metainfo">
+            <div class="line">
+              <label>Async API version: </label><label class="value">{{this.apiDocument?.version()}} </label>
+            </div>
+            <div class="line">
+              <label>Tittle: </label><label class="value">{{this.apiDocument?.info()?.title()}}</label>
+            </div>
+            <div class="line">
+              <label>Version: </label><label class="value">{{this.apiDocument?.info()?.version()}}</label>
+            </div>
+            <div class="line">
+              <label>Contact: </label><label class="value">{{this.apiDocument?.info()?.contact()?.name()}}
+                  ({{this.apiDocument?.info()?.contact()?.email()}})</label>
+            </div>
+           
           </div>
+          <label class="line">Object structure:</label>
+          <ngx-json-viewer [json]="documentContent" [expanded]="false" style="overflow:auto!important;"></ngx-json-viewer>
           <div>
             <button mat-stroked-button color="primary" (click)="this.exportToZip()">download zip</button>
           </div>
         </div>
         <div class="right-panel">
-          <label>Select items for code generation</label>
+          <span>Select items for code generation</span>
           <mat-button-toggle-group appearance="legacy" name="fontStyle" aria-label="Font Style" multiple>
             <mat-button-toggle value="definitions" (click)="definitionsClicked()">Definitions</mat-button-toggle>
             <mat-button-toggle value="conversion-functions"
