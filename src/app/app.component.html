@@ -1,33 +1,44 @@
 <div class="main-container">
-  <div class="tool-bar">
-    <button mat-stroked-button color="primary" (click)="fileInput.click()">Load AsyncAPI file</button>
-    <input style="display: none" type="file" (change)="onFileChanged($event)" #fileInput>
+  <div class="header">
+    <app-header></app-header>
   </div>
-  <div class="content-container">  
-    <div class="left-panel">
-      <label>Tree view:</label>
-      <div class="content">
-        <ngx-json-viewer [json]="documentContent" [expanded]="false" style="overflow:auto!important;"></ngx-json-viewer>
-      </div>
-      <div>
-        <button mat-stroked-button color="primary" (click)="this.exportToZip()">download zip</button>
-      </div>
-    </div>
-    <div class="right-panel">
-      <label>Select items for code generation</label>
-      <mat-button-toggle-group appearance="legacy" name="fontStyle" aria-label="Font Style" multiple>
-        <mat-button-toggle value="definitions" (click)="definitionsClicked()">Definitions</mat-button-toggle>
-        <mat-button-toggle value="conversion-functions" (click)="conversionFunctionsClicked()">Functions</mat-button-toggle>
-        <mat-button-toggle value="metainfo" (click)="metainfoClicked()">Metainfo</mat-button-toggle>
-        <mat-button-toggle value="topics" (click)="topicsClicked()">Topics</mat-button-toggle>
-        <mat-button-toggle value="communication-layer" (click)="communicationLayerClicked()">Comm. Layer</mat-button-toggle>
-        <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()">Comm. Impl</mat-button-toggle>
-      </mat-button-toggle-group>
-      <app-code-list 
-        [addItemSubject]="this.addItemSubject"
-        (onDownloadClicked)="this.export($event)"></app-code-list>
-    </div>
-  </div>
-</div>
+  <div class="left-and-content">
+    <div class="left">
 
-<router-outlet></router-outlet>
+    </div>
+    <div class="content">
+      <div class="tool-bar">
+        <button mat-stroked-button color="primary" (click)="fileInput.click()">Load AsyncAPI file</button>
+        <input style="display: none" type="file" (change)="onFileChanged($event)" #fileInput>
+      </div>
+      <div class="content-container">
+        <div class="left-panel">
+          <label>Tree view:</label>
+          <div class="content">
+            <ngx-json-viewer [json]="documentContent" [expanded]="false" style="overflow:auto!important;"></ngx-json-viewer>
+          </div>
+          <div>
+            <button mat-stroked-button color="primary" (click)="this.exportToZip()">download zip</button>
+          </div>
+        </div>
+        <div class="right-panel">
+          <label>Select items for code generation</label>
+          <mat-button-toggle-group appearance="legacy" name="fontStyle" aria-label="Font Style" multiple>
+            <mat-button-toggle value="definitions" (click)="definitionsClicked()">Definitions</mat-button-toggle>
+            <mat-button-toggle value="conversion-functions"
+              (click)="conversionFunctionsClicked()">Functions</mat-button-toggle>
+            <mat-button-toggle value="metainfo" (click)="metainfoClicked()">Metainfo</mat-button-toggle>
+            <mat-button-toggle value="topics" (click)="topicsClicked()">Topics</mat-button-toggle>
+            <mat-button-toggle value="communication-layer" (click)="communicationLayerClicked()">Comm.
+              Layer</mat-button-toggle>
+            <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()">Comm.
+              Impl</mat-button-toggle>
+          </mat-button-toggle-group>
+          <app-code-list [addItemSubject]="this.addItemSubject" (onDownloadClicked)="this.export($event)"></app-code-list>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+<!-- router-outlet></router-outlet -->

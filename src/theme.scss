@@ -1,0 +1,84 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+
+// Define a light theme
+$light-primary: mat.define-palette(mat.$indigo-palette);
+$light-accent: mat.define-palette(mat.$pink-palette);
+$light-warn: mat.define-palette(mat.$red-palette);
+$light-success: mat.define-palette(mat.$green-palette);
+$light-info: mat.define-palette(mat.$blue-palette);
+$light-purple: mat.define-palette(mat.$purple-palette);
+$light-lime: mat.define-palette(mat.$lime-palette);
+$light-cyan: mat.define-palette(mat.$cyan-palette);
+$light-amber: mat.define-palette(mat.$amber-palette);
+$light-teal: mat.define-palette(mat.$teal-palette);
+
+$light-theme: mat.define-light-theme((
+ color: (
+   primary: $light-primary,
+   accent: $light-accent,
+ )
+));
+
+// Define a dark theme
+$dark-primary: mat.define-palette(mat.$pink-palette);
+$dark-accent: mat.define-palette(mat.$blue-grey-palette);
+$dark-theme: mat.define-dark-theme((
+ color: (
+   primary: $dark-primary,
+   accent: $dark-accent,
+ )
+));
+
+// Apply the dark theme by default
+@include mat.core-theme($dark-theme);
+@include mat.button-theme($dark-theme);
+
+// Apply the light theme only when the `.my-light-theme` CSS class is applied
+// to an ancestor element of the components (such as `body`).
+.my-light-theme {
+ @include mat.core-color($light-theme);
+ @include mat.button-color($light-theme);
+}
+
+/* Material styles*/
+.mat-tab-label-active {
+  border-bottom: 4px solid map-get($map: $light-primary, $key: 500);
+  border-radius: 3px;
+}
+
+.mat-tab-body-wrapper {
+  height: 100%;
+}
+
+.mat-button-toggle{
+  outline: none!important;
+  margin-left: 5px;
+  height: 30px!important;
+  border-radius: 8px;
+  border: 1px solid map-get($map: $light-primary, $key: 500);
+  button{
+    span{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  span{
+    height: 30px!important;
+  }
+}
+
+.mat-button-toggle-group{
+  display: flex;
+  align-items: center;
+  height: 34px;
+  padding-right: 2px;
+}
+
+.mat-button-toggle-checked{
+  background-color: map-get($map: $light-primary, $key: 50);
+  font-weight: bold;
+}
