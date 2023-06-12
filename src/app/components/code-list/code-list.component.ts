@@ -10,8 +10,27 @@ import { Subject } from 'rxjs';
 export class CodeListComponent implements OnInit{
   items:any[] = []
 
+  zipItem:any = {
+    label: 'zip'
+  }
+
+  orderMap:Map<string,number> = new Map<string,number>(
+    [
+      ['definitions',0],
+      ['conversion-functions',1],
+      ['metainfo',2],
+      ['topics',3],
+      ['communication-layer',4],
+      ['communication-layer-impl',5],
+      ['zip',6]
+    ]
+  )
+
   @Input()
   addItemSubject?:Subject<any>
+
+  @Input()
+  clearSubject?: Subject<any>
 
   @Output()
   onDownloadClicked: EventEmitter<CodeListItemComponent> = new EventEmitter<CodeListItemComponent>()
@@ -26,8 +45,27 @@ export class CodeListComponent implements OnInit{
           } else {
             this.items.splice(index,1)
           }
+          this.updateZipItem()
         }
       }
     )
+
+    this.clearSubject?.subscribe(
+      {
+        next: (res) => {
+          this.items = []
+        }
+      }
+    )
+  }
+
+  updateZipItem(){
+    var index = this.items.findIndex( item => item.label == 'zip')
+    if(index == -1 && this.items.length > 0){
+      this.items.push(this.zipItem)
+    } else if (index != -1 && this.items.length == 1){
+      this.items.splice(index,1)
+    }
+    this.items.sort( (item1,item2) => this.orderMap.get(item1.label as string)! - this.orderMap.get(item2.label as string)!)
   }
 }

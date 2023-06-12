@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Parser } from '@asyncapi/parser';
 import { AsyncAPIDocument } from '@asyncapi/parser/esm/models/v2/asyncapi';
 import { SchemasHandler } from './util/schemas-handler';
@@ -10,6 +10,7 @@ import { InitialMetainfoHandler } from './util/initial-metainfo-handler';
 import { Subject } from 'rxjs';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
 import JSZip from 'jszip';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 
 const parser = new Parser();
 
@@ -42,8 +43,11 @@ export class AppComponent {
   dependentNodes: any[] = []
 
   addItemSubject:Subject<any> = new Subject<any>()
+  clearSubject: Subject<void> = new Subject<void>()
 
-  
+  selected:Set<string> = new Set<string>()
+
+  @ViewChild("buttonGroup") buttonGroup?:ElementRef
 
   constructor(private loadFileService: LoadTextFileService) {
     this.loadConversionFunctions()
@@ -195,6 +199,37 @@ export class AppComponent {
     item.content = this.communicationLayerImplContent
     item.label = 'communication-layer-impl'
     this.addItemSubject.next(item)
+  }
+
+  allItemsClicked(event:any) {
+    console.log('button group', this.buttonGroup, event)
+    //var item = new CodeListItemComponent()
+    //item.content = this.communicationLayerImplContent
+    //item.label = 'communication-layer-impl'
+    //this.addItemSubject.next(item)
+    
+  }
+
+  groupChanged(event:any){
+    if(event.source?.value == 'all'){
+      var selecteds = ['definitions', 'conversion-functions', 'metainfo', 'topics', 'communication-layer', 'communication-layer-impl']
+      var previousSelection = [...this.selected]
+      if(event.source?._checked){
+        this.selected.clear()
+        this.clearSubject.next()
+        selecteds.forEach( s => this.selected.add(s))
+        this.definitionsClicked()
+        this.conversionFunctionsClicked()
+        this.metainfoClicked()
+        this.topicsClicked()
+        this.communicationLayerClicked()
+        this.communicationLayerImplClicked()
+      } else {
+        this.selected.clear()
+        this.clearSubject.next()
+      }
+      
+    }
   }
 
   exportDefinitions() {

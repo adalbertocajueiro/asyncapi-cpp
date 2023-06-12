@@ -22,6 +22,8 @@
         .left{
             display: flex;
             width: 60px;
+            min-width: 60px;
+            max-width: 60px;
             height: 100%;
             background-color: #b82929;
         }
@@ -30,7 +32,7 @@
             flex-direction: column;
             justify-content: flex-start;
             height: 100%!important;
-            width: 100%;
+            width: calc(100% - 60px);
 
             .tool-bar {
                     display: flex;
@@ -87,8 +89,8 @@
         flex-direction: column;
         font-weight: 500;  
         .value{
-            font-weight: 500;
-            color: rgb(186, 65, 65);
+            font-weight: 400;
+            color: rgb(223, 81, 81);
         } 
     }
 }

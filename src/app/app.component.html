@@ -3,7 +3,7 @@
     <app-header></app-header>
   </div>
   <div class="left-and-content">
-    <div class="left"></div>
+    <div class="left"> </div>
     <div class="content">
       <div class="tool-bar">
         <button mat-stroked-button color="warn" (click)="fileInput.click()" >
@@ -40,18 +40,31 @@
         </div>
         <div class="right-panel">
           <span>Select items for code generation</span>
-          <mat-button-toggle-group appearance="legacy" name="fontStyle" aria-label="Font Style" multiple>
-            <mat-button-toggle value="definitions" (click)="definitionsClicked()">Definitions</mat-button-toggle>
+          <mat-button-toggle-group #buttonGroup appearance="legacy" name="fontStyle" 
+            aria-label="Font Style" multiple
+            (change)="groupChanged($event)"
+            (valueChange)="groupChanged($event)">
+            <mat-button-toggle value="definitions" (click)="definitionsClicked()"
+              [checked]="this.selected.has('definitions')">Definitions</mat-button-toggle>
             <mat-button-toggle value="conversion-functions"
-              (click)="conversionFunctionsClicked()">Functions</mat-button-toggle>
-            <mat-button-toggle value="metainfo" (click)="metainfoClicked()">Metainfo</mat-button-toggle>
-            <mat-button-toggle value="topics" (click)="topicsClicked()">Topics</mat-button-toggle>
-            <mat-button-toggle value="communication-layer" (click)="communicationLayerClicked()">Comm.
+              (click)="conversionFunctionsClicked()"
+              [checked]="this.selected.has('conversion-functions')">Functions</mat-button-toggle>
+            <mat-button-toggle value="metainfo" (click)="metainfoClicked()"
+            [checked]="this.selected.has('metainfo')">Metainfo</mat-button-toggle>
+            <mat-button-toggle value="topics" (click)="topicsClicked()"
+            [checked]="this.selected.has('topics')">Topics</mat-button-toggle>
+            <mat-button-toggle value="communication-layer" (click)="communicationLayerClicked()"
+            [checked]="this.selected.has('communication-layer')">Comm.
               Layer</mat-button-toggle>
-            <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()">Comm.
+            <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()"
+            [checked]="this.selected.has('communication-layer-impl')">Comm.
               Impl</mat-button-toggle>
+              <mat-button-toggle value="all">All</mat-button-toggle>
           </mat-button-toggle-group>
-          <app-code-list [addItemSubject]="this.addItemSubject" (onDownloadClicked)="this.export($event)"></app-code-list>
+          <app-code-list 
+            [addItemSubject]="this.addItemSubject" 
+            [clearSubject]="this.clearSubject"
+            (onDownloadClicked)="this.export($event)"></app-code-list>
         </div>
       </div>
     </div>
