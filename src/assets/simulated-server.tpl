@@ -14,9 +14,6 @@
 #define mqtt_port 1883
 
 static int run = 1;
-pthread_t search_home_thread;
-pthread_t move_to_point_thread;
-pthread_t apply_trajectory_thread;
 
 typedef struct
 {
