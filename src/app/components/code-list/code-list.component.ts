@@ -11,7 +11,7 @@ export class CodeListComponent implements OnInit{
   items:any[] = []
 
   zipItem:any = {
-    label: 'zip'
+    label: 'all'
   }
 
   orderMap:Map<string,number> = new Map<string,number>(
@@ -22,7 +22,7 @@ export class CodeListComponent implements OnInit{
       ['topics',3],
       ['communication-layer',4],
       ['communication-layer-impl',5],
-      ['zip',6]
+      ['all',6]
     ]
   )
 
@@ -45,7 +45,7 @@ export class CodeListComponent implements OnInit{
           } else {
             this.items.splice(index,1)
           }
-          this.updateZipItem()
+          this.updateItemAll()
         }
       }
     )
@@ -59,8 +59,8 @@ export class CodeListComponent implements OnInit{
     )
   }
 
-  updateZipItem(){
-    var index = this.items.findIndex( item => item.label == 'zip')
+  updateItemAll(){
+    var index = this.items.findIndex( item => item.label == 'all')
     if(index == -1 && this.items.length > 0){
       this.items.push(this.zipItem)
     } else if (index != -1 && this.items.length == 1){

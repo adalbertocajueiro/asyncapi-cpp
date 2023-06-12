@@ -36,5 +36,15 @@
     align-items: center;
     justify-content: flex-end;
     height: 40px;
+
+    mat-icon {
+            width: 25px;
+    
+            &:hover {
+                cursor: pointer;
+            }
+    
+            color: darkgray;
+        }
 }
 

@@ -126,7 +126,7 @@ export class AppComponent {
         //console.log('file result', this.selectedFile, fileReader.result)
         if (fileReader.result) {
           this.yamlContent = fileReader.result.toString()
-          this.parseYamlContent()
+          await this.parseYamlContent()
 
           this.documentContent = JSON.parse(JSON.stringify(this.parsedDocument.document._json))//parsed.document._json
           //JSON.parse(JSON.stringify(
@@ -207,6 +207,7 @@ export class AppComponent {
   }
 
   groupChanged(event:any){
+    console.log('event', event)
     if(event.source?.value == 'all'){ 
       if(event.source?._checked){
         this.selected.clear()
@@ -223,15 +224,11 @@ export class AppComponent {
         this.clearSubject.next()
       }
     } else {
-      console.log('not all', event.source?.value)
       if(this.selected.has(event.source?.value)){
-        console.log('has before', this.selected)
         this.selected.delete(event.source?.value)
         this.selected.delete('all')
-        console.log('has', this.selected)
       } else {
         this.selected.add(event.source?.value)
-        console.log('has', this.selected, this.maxSelecteds)
         if (this.selected.size == this.maxSelecteds.length - 1) {
           this.selected.add('all')
         }
@@ -325,6 +322,7 @@ export class AppComponent {
   }
 
   export(event: CodeListItemComponent){
+    console.log('event label')
     switch(event.label){
       case 'definitions':
         this.exportDefinitions()
@@ -343,6 +341,9 @@ export class AppComponent {
         break
       case 'communication-layer-impl':
         this.exportCommunicationLayerImpl()
+        break
+      case 'all':
+        this.exportToZip()
         break
     }
   }

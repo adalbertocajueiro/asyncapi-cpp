@@ -1,19 +1,19 @@
-<div class="container"  *ngIf="this.item && this.item.label != 'zip'" [ngClass]="!expanded?'collapsed':''">
-    <mat-icon *ngIf="!expanded && this.item.label != 'zip'" matTooltip="Show content" matTooltipPosition="left" (click)="itemClicked()">expand_more</mat-icon>
-    <pre *ngIf="!expanded && this.item.label != 'zip'">{{this.item.label}}</pre> 
-    <mat-icon *ngIf="!expanded && this.item.label != 'zip'" matTooltip="Download" matTooltipPosition="left"
+<div class="container"  *ngIf="this.item && this.item.label != 'all'" [ngClass]="!expanded?'collapsed':''">
+    <mat-icon *ngIf="!expanded && this.item.label != 'all'" matTooltip="Show content" matTooltipPosition="left" (click)="itemClicked()">expand_more</mat-icon>
+    <pre *ngIf="!expanded && this.item.label != 'all'">{{this.item.label}}</pre> 
+    <mat-icon *ngIf="!expanded && this.item.label != 'all'" matTooltip="Download" matTooltipPosition="left"
         (click)="downloadClicked()">file_download</mat-icon>
 
-    <mat-icon *ngIf="expanded && this.item.label != 'zip'" matTooltip="Hide content" matTooltipPosition="left" (click)="itemClicked()">expand_less</mat-icon>
-    <pre *ngIf="expanded && this.item.label != 'zip'">{{this.item.content}}</pre>
-    <mat-icon *ngIf="expanded && this.item.label != 'zip'" matTooltip="Download" matTooltipPosition="left"
+    <mat-icon *ngIf="expanded && this.item.label != 'all'" matTooltip="Hide content" matTooltipPosition="left" (click)="itemClicked()">expand_less</mat-icon>
+    <pre *ngIf="expanded && this.item.label != 'all'">{{this.item.content}}</pre>
+    <mat-icon *ngIf="expanded && this.item.label != 'all'" matTooltip="Download" matTooltipPosition="left"
         (click)="downloadClicked()">file_download</mat-icon>
     
-    <mat-icon *ngIf="this.item.label == 'zip'" matTooltip="Download all in a zip file" matTooltipPosition="left"
+    <mat-icon *ngIf="this.item.label == 'all'" matTooltip="Download all in a zip file" matTooltipPosition="left"
             (click)="downloadClicked()">file_download</mat-icon>
 </div>
-<div class="zipitem" *ngIf="this.item && this.item.label == 'zip'">
-    <label>Generate all and download</label>
-    <mat-icon *ngIf="this.item.label == 'zip'" matTooltip="Download all in a zip file" matTooltipPosition="left"
+<div class="zipitem" *ngIf="this.item && this.item.label == 'all'">
+    <label>Generate all elements and download</label>
+    <mat-icon *ngIf="this.item.label == 'all'" matTooltip="Download all in a zip file" matTooltipPosition="left"
         (click)="downloadClicked()">file_download</mat-icon>
 </div>

@@ -13,37 +13,34 @@
 
         <div class="message" *ngIf="!this.apiDocument"><label>No specification file loaded. Please select a valid Async API YAML file</label></div>
       </div>
-      <div class="content-container">
+      <div *ngIf="this.apiDocument" class="content-container">
         <div class="left-panel">
           <span>Specification details</span>
           <div class="metainfo">
             <div class="line">
-              <label>Async API version: </label><label class="value">{{this.apiDocument?.version()}} </label>
+              <label>Async API version: </label><label class="value">{{this.apiDocument.version()}} </label>
             </div>
             <div class="line">
-              <label>Tittle: </label><label class="value">{{this.apiDocument?.info()?.title()}}</label>
+              <label>Tittle: </label><label class="value">{{this.apiDocument.info().title()}}</label>
             </div>
             <div class="line">
-              <label>Version: </label><label class="value">{{this.apiDocument?.info()?.version()}}</label>
+              <label>Version: </label><label class="value">{{this.apiDocument.info().version()}}</label>
             </div>
             <div class="line">
-              <label>Contact: </label><label class="value">{{this.apiDocument?.info()?.contact()?.name()}}
-                  ({{this.apiDocument?.info()?.contact()?.email()}})</label>
+              <label>Contact: </label><label class="value">{{this.apiDocument.info().contact()?.name()}}
+                  ({{this.apiDocument.info().contact()?.email()}})</label>
             </div>
            
           </div>
           <label class="line">Object structure:</label>
           <ngx-json-viewer [json]="documentContent" [expanded]="false" style="overflow:auto!important;"></ngx-json-viewer>
-          <div>
-            <button mat-stroked-button color="primary" (click)="this.exportToZip()">download zip</button>
-          </div>
+          
         </div>
         <div class="right-panel">
           <span>Choose elements to see the generated code</span>
           <mat-button-toggle-group #buttonGroup appearance="legacy" name="fontStyle" 
             aria-label="Font Style" multiple
-            (change)="groupChanged($event)"
-            (valueChange)="groupChanged($event)">
+            (change)="groupChanged($event)">
             <mat-button-toggle value="definitions" (click)="definitionsClicked()"
               [checked]="this.selected.has('definitions')">Definitions</mat-button-toggle>
             <mat-button-toggle value="conversion-functions"
@@ -59,7 +56,7 @@
             <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()"
             [checked]="this.selected.has('communication-layer-impl')">Comm.
               Impl</mat-button-toggle>
-              <mat-button-toggle value="all" (click)="allItemsClicked($event)"
+              <mat-button-toggle value="all" 
                 [checked]="this.selected.has('all')">All</mat-button-toggle>
           </mat-button-toggle-group>
           <app-code-list 
