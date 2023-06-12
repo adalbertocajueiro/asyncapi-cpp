@@ -14,7 +14,7 @@ export class CodeListItemComponent {
   content:string = ''
 
   @Input()
-  label?: 'definitions' | 'conversion-functions' | 'metainfo' | 'topics' | 'communication-layer' | 'communication-layer-impl' | 'all'
+  label?: 'definitions' | 'conversion-functions' | 'metainfo' | 'topics' | 'communication-layer' | 'communication-layer-impl'| 'simulated-server' | 'all'
 
   expanded:boolean = false
 

@@ -10,7 +10,6 @@ import { InitialMetainfoHandler } from './util/initial-metainfo-handler';
 import { Subject } from 'rxjs';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
 import JSZip from 'jszip';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 
 const parser = new Parser();
 
@@ -38,6 +37,7 @@ export class AppComponent {
   topicsContent:any
   communicationLayerContent:any
   communicationLayerImplContent:any
+  simulatedServerContent: any
 
   independentNodes: any[] = []
   dependentNodes: any[] = []
@@ -46,13 +46,14 @@ export class AppComponent {
   clearSubject: Subject<void> = new Subject<void>()
 
   selected:Set<string> = new Set<string>()
-  maxSelecteds = ['definitions', 'conversion-functions', 'metainfo', 'topics', 'communication-layer', 'communication-layer-impl', 'all']
+  maxSelecteds = ['definitions', 'conversion-functions', 'metainfo', 'topics', 'communication-layer', 'communication-layer-impl', 'simulated-server', 'all']
 
   @ViewChild("buttonGroup") buttonGroup?:ElementRef
 
   constructor(private loadFileService: LoadTextFileService) {
     this.loadConversionFunctions()
     this.loadMetainfo()
+    this.loadSimulatedServer()
   }
 
   loadConversionFunctions() {
@@ -67,6 +68,14 @@ export class AppComponent {
     this.loadFileService.loadFileAsText('../assets/metainfo.tpl').subscribe(
       async data => {
         this.metainfoContent = data.toLocaleString()
+      }
+    )
+  }
+
+  loadSimulatedServer() {
+    this.loadFileService.loadFileAsText('../assets/simulated-server.tpl').subscribe(
+      async data => {
+        this.simulatedServerContent = data.toLocaleString()
       }
     )
   }
@@ -202,6 +211,15 @@ export class AppComponent {
     this.addItemSubject.next(item)
   }
 
+  simulatedServerClicked() {
+    var item = new CodeListItemComponent()
+    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
+    //item.content = this.channelsHandler?.buildCommunicationLayerImpl()!
+    item.content = this.simulatedServerContent
+    item.label = 'simulated-server'
+    this.addItemSubject.next(item)
+  }
+
   allItemsClicked(event:any) {
     console.log('button group', event)
   }
@@ -219,6 +237,7 @@ export class AppComponent {
         this.topicsClicked()
         this.communicationLayerClicked()
         this.communicationLayerImplClicked()
+        this.simulatedServerClicked()
       } else {
         this.selected.clear()
         this.clearSubject.next()
@@ -321,6 +340,19 @@ export class AppComponent {
 
   }
 
+  exportSimulatedServer() {
+    const data = this.simulatedServerContent
+    const blob = new Blob([data], {
+      type: 'application/octet-stream'
+    });
+    const a = document.createElement('a')
+    var fileUrl = window.URL.createObjectURL(blob);
+    a.href = fileUrl
+    a.download = "simulated-server.cpp"
+    a.click();
+    URL.revokeObjectURL(fileUrl);
+  }
+
   export(event: CodeListItemComponent){
     console.log('event label')
     switch(event.label){
@@ -342,6 +374,9 @@ export class AppComponent {
       case 'communication-layer-impl':
         this.exportCommunicationLayerImpl()
         break
+      case 'simulated-server':
+        this.exportSimulatedServer()
+        break
       case 'all':
         this.exportToZip()
         break
@@ -356,6 +391,7 @@ export class AppComponent {
     zip.file("topics.cpp", this.topicsContent);
     zip.file("communication-layer.cpp", this.communicationLayerContent);
     zip.file("communication-layer-impl.cpp", this.communicationLayerImplContent);
+    zip.file("simulated-server.cpp", this.simulatedServerContent);
     zip.generateAsync({ type: 'blob' }).then( content => {
       if(content){
         const blob = new Blob([content], {

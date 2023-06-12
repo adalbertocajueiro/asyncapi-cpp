@@ -56,7 +56,9 @@
             <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()"
             [checked]="this.selected.has('communication-layer-impl')">Comm.
               Impl</mat-button-toggle>
-              <mat-button-toggle value="all" 
+            <mat-button-toggle value="simulated-server" (click)="simulatedServerClicked()"
+              [checked]="this.selected.has('simulated-server')">Server</mat-button-toggle>
+            <mat-button-toggle value="all" 
                 [checked]="this.selected.has('all')">All</mat-button-toggle>
           </mat-button-toggle-group>
           <app-code-list 

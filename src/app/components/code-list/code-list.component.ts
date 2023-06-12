@@ -22,7 +22,8 @@ export class CodeListComponent implements OnInit{
       ['topics',3],
       ['communication-layer',4],
       ['communication-layer-impl',5],
-      ['all',6]
+      ['simulated-server', 6],
+      ['all',7]
     ]
   )
 
