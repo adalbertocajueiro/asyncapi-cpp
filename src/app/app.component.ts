@@ -46,6 +46,7 @@ export class AppComponent {
   clearSubject: Subject<void> = new Subject<void>()
 
   selected:Set<string> = new Set<string>()
+  maxSelecteds = ['definitions', 'conversion-functions', 'metainfo', 'topics', 'communication-layer', 'communication-layer-impl', 'all']
 
   @ViewChild("buttonGroup") buttonGroup?:ElementRef
 
@@ -202,22 +203,15 @@ export class AppComponent {
   }
 
   allItemsClicked(event:any) {
-    console.log('button group', this.buttonGroup, event)
-    //var item = new CodeListItemComponent()
-    //item.content = this.communicationLayerImplContent
-    //item.label = 'communication-layer-impl'
-    //this.addItemSubject.next(item)
-    
+    console.log('button group', event)
   }
 
   groupChanged(event:any){
-    if(event.source?.value == 'all'){
-      var selecteds = ['definitions', 'conversion-functions', 'metainfo', 'topics', 'communication-layer', 'communication-layer-impl']
-      var previousSelection = [...this.selected]
+    if(event.source?.value == 'all'){ 
       if(event.source?._checked){
         this.selected.clear()
         this.clearSubject.next()
-        selecteds.forEach( s => this.selected.add(s))
+        this.maxSelecteds.forEach( s => this.selected.add(s))
         this.definitionsClicked()
         this.conversionFunctionsClicked()
         this.metainfoClicked()
@@ -228,7 +222,20 @@ export class AppComponent {
         this.selected.clear()
         this.clearSubject.next()
       }
-      
+    } else {
+      console.log('not all', event.source?.value)
+      if(this.selected.has(event.source?.value)){
+        console.log('has before', this.selected)
+        this.selected.delete(event.source?.value)
+        this.selected.delete('all')
+        console.log('has', this.selected)
+      } else {
+        this.selected.add(event.source?.value)
+        console.log('has', this.selected, this.maxSelecteds)
+        if (this.selected.size == this.maxSelecteds.length - 1) {
+          this.selected.add('all')
+        }
+      }
     }
   }
 

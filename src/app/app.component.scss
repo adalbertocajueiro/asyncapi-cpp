@@ -110,23 +110,11 @@
             display: flex;
             justify-content: center;
             text-transform: uppercase;
+            margin-bottom: 10px;
         }
     .buttons{
         display: flex;
         justify-content: space-between;
-    }
-}
-.content1{
-    display: flex;
-    justify-content: center;
-    width: 98%;
-    max-height:300px;
-    border: 1px solid lightgray;
-    border-radius: 4px;
-    padding: 5px;
-    //overflow: auto !important; 
-    pre{
-        white-space: pre-wrap;
     }
 }
 

@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="right-panel">
-          <span>Select items for code generation</span>
+          <span>Choose elements to see the generated code</span>
           <mat-button-toggle-group #buttonGroup appearance="legacy" name="fontStyle" 
             aria-label="Font Style" multiple
             (change)="groupChanged($event)"
@@ -59,7 +59,8 @@
             <mat-button-toggle value="communication-layer-impl" (click)="communicationLayerImplClicked()"
             [checked]="this.selected.has('communication-layer-impl')">Comm.
               Impl</mat-button-toggle>
-              <mat-button-toggle value="all">All</mat-button-toggle>
+              <mat-button-toggle value="all" (click)="allItemsClicked($event)"
+                [checked]="this.selected.has('all')">All</mat-button-toggle>
           </mat-button-toggle-group>
           <app-code-list 
             [addItemSubject]="this.addItemSubject" 
