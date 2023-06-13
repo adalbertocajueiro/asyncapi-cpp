@@ -6,17 +6,18 @@
     <div class="left"> </div>
     <div class="content">
       <div class="tool-bar">
-        <button mat-stroked-button color="warn" (click)="fileInput.click()" >
+        <button mat-stroked-button (click)="fileInput.click()" >
           <mat-icon fontSet="material-icons-outlined" >upload</mat-icon>
             Load AsyncAPI file</button>
         <input style="display: none" type="file" (change)="onFileChanged($event)" #fileInput>
-        <mat-chip-listbox multiple="false" 
+        <mat-chip-listbox multiple="false" required="true"
           [aria-orientation]="'horizontal'"
-          (change)="languageSelected($event)">
-          <mat-chip-option selected color="warn" value="cpp">C/C++</mat-chip-option>
-          <mat-chip-option color="warn" value="js">JS</mat-chip-option>
+          defaultTabIndex = 0>
+          <mat-chip-option selected value="cpp" (selectionChange)="chipClicked($event)">C/C++</mat-chip-option>
+          <mat-chip-option value="js" (selectionChange)="chipClicked($event)">JS</mat-chip-option>
         </mat-chip-listbox>
-        <div class="message" *ngIf="!this.apiDocument"><label>No specification file loaded. Please select a valid Async API YAML file</label></div>
+        <div class="message" *ngIf="!this.apiDocument">
+          <label>No specification file loaded. Please select a valid Async API YAML file</label></div>
       </div>
       <div *ngIf="this.apiDocument" class="content-container">
         <div class="left-panel">

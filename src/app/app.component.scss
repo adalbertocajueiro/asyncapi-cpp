@@ -43,12 +43,15 @@
             
                     .message {
                         display: flex;
-                        justify-content: center;
-                        width: 80%;
+                        justify-content: flex-start;
+                        margin-left: 8rem;
+                        width: 70%;
                         color: rgb(141, 139, 139)
                     }
                     button{
                         width: 210px;
+                        background-color:#f3dede;
+                        border-color: #b82929;
                     }
                 }
         }
@@ -140,4 +143,24 @@ button{
 mat-chip-listbox{
     width: 180px;
     margin-left: 10px;
+}
+
+mat-chip-option{
+    background-color: #f3dede !important;
+    border: 0.5px solid #e65050 !important;
+    color: #212121!important;
+}
+
+:host ::ng-deep .mat-mdc-standard-chip.mat-mdc-chip-selected{
+    color: #212121 !important;
+    border: 1.2px solid #b82929!important;
+    background-color: #f2c8c8!important;
+}
+
+:host ::ng-deep .mdc-evolution-chip__text-label{
+    color: #212121 !important;
+}
+
+:host ::ng-deep .mdc-evolution-chip__checkmark{
+    color: #212121 !important;
 }

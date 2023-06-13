@@ -7,6 +7,7 @@ import { ChannelsHandler } from './util/channels-handler';
 import { Subject } from 'rxjs';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
 import JSZip from 'jszip';
+import { MatChipOption } from '@angular/material/chips';
 
 const parser = new Parser();
 
@@ -35,6 +36,8 @@ export class AppComponent {
   communicationLayerContent: any
   communicationLayerImplContent: any
   simulatedServerContent: any
+
+  selectedLanguage: 'cpp' | 'js' = 'cpp'
 
   addItemSubject: Subject<any> = new Subject<any>()
   clearSubject: Subject<void> = new Subject<void>()
@@ -73,8 +76,12 @@ export class AppComponent {
   }
 
 
-  languageSelected(event:any){
-    console.log('language', event)
+  chipClicked(event:any){
+    if(!event.selected){
+      (event.source as MatChipOption).select()
+    } else {
+      this.selectedLanguage = (event.source as MatChipOption).value
+    }
   }
   
   onFileChanged(event: any) {
