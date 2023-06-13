@@ -47,6 +47,9 @@
                         width: 80%;
                         color: rgb(141, 139, 139)
                     }
+                    button{
+                        width: 210px;
+                    }
                 }
         }
         
@@ -132,4 +135,9 @@ span::before {
 }
 button{
     color: rgb(186, 65, 65)!important;
+}
+
+mat-chip-listbox{
+    width: 180px;
+    margin-left: 10px;
 }

@@ -23,7 +23,7 @@ export class ChannelsHandler {
         })
     }
 
-    buildTopics() {
+    generateTopics() {
 
         var result = this.channelGenerator?.generateInclude()
         result = result?.concat(this.channelGenerator?.generateVariables()!)
@@ -31,12 +31,12 @@ export class ChannelsHandler {
             result = result!.concat(this.channelGenerator?.generateTopicsDeclaration(topic)!)
         })
 
-        result = result?.concat(this.buildSubscribeAllTopics())
+        result = result?.concat(this.generateSubscribeAllTopics())
 
         return result
     }
 
-    buildSubscribeAllTopics() {
+    generateSubscribeAllTopics() {
         var result = ''
 
         result = result.concat('\n\n' + 'void subscribe_all_topics()' + '\n')
@@ -48,25 +48,25 @@ export class ChannelsHandler {
 
         result = result.concat('\n')
         result = result.concat('  std::cout << "Subscribed on topics: " << std::endl\n')
-        for (const [i,topic] of this.channelGenerator!.topicNames.entries()){
+        for (const [i, topic] of this.channelGenerator!.topicNames.entries()) {
             result = result!.concat('    << "  " + ' + topic + '<< std::endl')
-            if (i == this.channelGenerator!.topicNames.length - 1){
+            if (i == this.channelGenerator!.topicNames.length - 1) {
                 result = result.concat(';\n')
             } else {
                 result = result.concat('\n')
             }
         }
-        
+
         result = result.concat('\n}')
         return result
-        
+
     }
 
-    buildCommunicationLayer(){
+    generateCommunicationLayer() {
         return this.channelGenerator?.generateCommunicationLayer()
     }
 
-    buildCommunicationLayerImpl() {
+    generateCommunicationLayerImpl() {
         return this.channelGenerator?.generateCommunicationLayerImpl()
     }
 }

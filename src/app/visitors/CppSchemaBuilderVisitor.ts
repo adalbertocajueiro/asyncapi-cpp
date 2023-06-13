@@ -6,10 +6,7 @@ import { ClassType } from "../models/class";
 
 export class CppSchemaBuilderVisitor {
 
-    constructor() {
-    }
-
-    buildObject(schema: Schema) {
+    buildNode(schema: Schema) {
         var node: any
         //se for um enum
         if (schema.enum()) {

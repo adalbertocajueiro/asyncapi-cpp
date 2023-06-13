@@ -5,9 +5,6 @@ import { AsyncOperation, OperationType } from "../models/operation";
 
 export class CppChannelBuilderVisitor {
 
-    constructor() {
-    }
-
     buildNode(channel: ChannelInterface) {
         var operations = channel.operations()
         var topic:any 

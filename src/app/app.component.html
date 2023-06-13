@@ -10,7 +10,12 @@
           <mat-icon fontSet="material-icons-outlined" >upload</mat-icon>
             Load AsyncAPI file</button>
         <input style="display: none" type="file" (change)="onFileChanged($event)" #fileInput>
-
+        <mat-chip-listbox multiple="false" 
+          [aria-orientation]="'horizontal'"
+          (change)="languageSelected($event)">
+          <mat-chip-option selected color="warn" value="cpp">C/C++</mat-chip-option>
+          <mat-chip-option color="warn" value="js">JS</mat-chip-option>
+        </mat-chip-listbox>
         <div class="message" *ngIf="!this.apiDocument"><label>No specification file loaded. Please select a valid Async API YAML file</label></div>
       </div>
       <div *ngIf="this.apiDocument" class="content-container">
@@ -38,7 +43,7 @@
         </div>
         <div class="right-panel">
           <span>Choose elements to see the generated code</span>
-          <mat-button-toggle-group #buttonGroup appearance="legacy" name="fontStyle" 
+          <mat-button-toggle-group appearance="legacy" name="fontStyle" 
             aria-label="Font Style" multiple
             (change)="groupChanged($event)">
             <mat-button-toggle value="definitions" (click)="definitionsClicked()"

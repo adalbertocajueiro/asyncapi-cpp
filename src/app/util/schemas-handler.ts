@@ -1,7 +1,8 @@
-import { HttpClient } from "@angular/common/http";
 import { SchemaInterface } from "@asyncapi/parser";
 import { Schema } from "@asyncapi/parser/esm/models/v2/schema";
 import { Schemas } from "@asyncapi/parser/esm/models/v2/schemas";
+import { CppSchemaBuilderVisitor } from "../visitors/CppSchemaBuilderVisitor";
+import { CppSchemaGeneratorVisitor } from "../visitors/CppSchemaGeneratorVisitor";
 
 //export const yamlContent = fs.readFileSync('./files/edscorbot-async-api.yaml', 'utf-8');
 
@@ -14,16 +15,62 @@ export class SchemasHandler {
     dependentSchemas:Schemas = new Schemas([])
     orderedDependencies:Set<string> = new Set<string>()
 
+    independentNodes: any[] = []
+    dependentNodes: any[] = []
+
+    schemaBuilder?:CppSchemaBuilderVisitor
+    scchemaGenerator?:CppSchemaGeneratorVisitor
 
     constructor(schemas:Schemas){
         this.allSchemas = schemas
-        console.log('schemas',this.allSchemas)
         this.extractDependentSchemas()
+        this.schemaBuilder = new CppSchemaBuilderVisitor()
+        this.scchemaGenerator = new CppSchemaGeneratorVisitor()
+        this.buildNodes()
+    }
+
+    generateDefinitions() {
+        var result = ''
+
+        result = result.concat('#include <string>\n')
+        result = result.concat('#include "nlohmann/json.hpp"\n\n')
+
+        result = result.concat('using json = nlohmann::json;\n\n')
+
+        var cppGenerator = new CppSchemaGeneratorVisitor()
+        this.independentNodes.forEach(node => {
+            result = result.concat(cppGenerator.visitNode(node))
+            result = result.concat('\n\n')
+        })
+
+        this.dependentNodes.forEach(node => {
+            result = result.concat(cppGenerator.visitNode(node))
+            result = result.concat('\n\n')
+        })
+
+        return result
+    }
+
+    buildNodes() {
+        this.independentSchemas.forEach(sch => {
+            var astBuilder = new CppSchemaBuilderVisitor()
+            var node = astBuilder.buildNode(sch)
+            if (node) {
+                this.independentNodes.push(node)
+            }
+        })
+        this.dependentSchemas.forEach(sch => {
+            var astBuilder = new CppSchemaBuilderVisitor()
+            var cppGenerator = new CppSchemaGeneratorVisitor()
+            var node = astBuilder.buildNode(sch)
+            if (node) {
+                this.dependentNodes.push(node)
+            }
+        })
     }
 
     private extractDependentSchemas(){
         this.allSchemas?.forEach( schema => {
-            //console.log(schema.id(), schema.properties())
             {
                 if (this.isDependent(schema.id(), schema)) {
                     this.dependentSchemas.push(schema)
@@ -62,13 +109,11 @@ export class SchemasHandler {
             return result
         })
         //a ordenacao precisa ser diferente e baseada num grafo de dependencias
-        
-        console.log ('ordered dependencies', this.orderedDependencies)
-        console.log('independent schemas', this.independentSchemas)
-        console.log('dependent schemas', this.dependentSchemas)
+        //TODO ordenacao de esquemas antes da geracao ainda nao funciona com escopos
+        // com mais de um objeto interno a outro
     }
 
-    dependencies(schema:Schema){
+    private dependencies(schema:Schema){
         if (schema.type() == 'array'){
             var items = schema.items() as Schema[]
             items.forEach(item => {

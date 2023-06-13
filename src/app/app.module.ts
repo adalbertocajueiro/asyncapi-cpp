@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatChipsModule } from '@angular/material/chips';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { CodeListComponent } from './components/code-list/code-list.component';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
@@ -30,6 +31,7 @@ import { HeaderComponent } from './components/header/header.component';
     MatButtonToggleModule,
     MatIconModule,
     MatTooltipModule,
+    MatChipsModule,
     NgxJsonViewerModule
   ],
   providers: [],

@@ -3,10 +3,7 @@ import { Parser } from '@asyncapi/parser';
 import { AsyncAPIDocument } from '@asyncapi/parser/esm/models/v2/asyncapi';
 import { SchemasHandler } from './util/schemas-handler';
 import { LoadTextFileService } from './services/load-file.service';
-import { CppSchemaBuilderVisitor } from './visitors/CppSchemaBuilderVisitor';
-import { CppSchemaGeneratorVisitor } from './visitors/CppSchemaGeneratorVisitor';
 import { ChannelsHandler } from './util/channels-handler';
-import { InitialMetainfoHandler } from './util/initial-metainfo-handler';
 import { Subject } from 'rxjs';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
 import JSZip from 'jszip';
@@ -20,35 +17,30 @@ const parser = new Parser();
 })
 
 export class AppComponent {
-  title = 'asyncapi-cpp';
-
-  apiDocument?: AsyncAPIDocument
-  parsedDocument?:any
-  documentContent: any
+  title = 'AsyncAPI Generator Tool';
 
   yamlContent: any
+
+  apiDocument?: AsyncAPIDocument
+  documentContent: any
+  parsedDocument?: any
+  
   schemasHandler?: SchemasHandler
   channelsHandler?: ChannelsHandler
-  metainfoHandler?: InitialMetainfoHandler
-  
-  definitionsContent:any
+
+  definitionsContent: any
   conversionFunctionsContent: any
   metainfoContent: any
-  topicsContent:any
-  communicationLayerContent:any
-  communicationLayerImplContent:any
+  topicsContent: any
+  communicationLayerContent: any
+  communicationLayerImplContent: any
   simulatedServerContent: any
 
-  independentNodes: any[] = []
-  dependentNodes: any[] = []
-
-  addItemSubject:Subject<any> = new Subject<any>()
+  addItemSubject: Subject<any> = new Subject<any>()
   clearSubject: Subject<void> = new Subject<void>()
 
-  selected:Set<string> = new Set<string>()
+  selected: Set<string> = new Set<string>()
   maxSelecteds = ['definitions', 'conversion-functions', 'metainfo', 'topics', 'communication-layer', 'communication-layer-impl', 'simulated-server', 'all']
-
-  @ViewChild("buttonGroup") buttonGroup?:ElementRef
 
   constructor(private loadFileService: LoadTextFileService) {
     this.loadConversionFunctions()
@@ -80,50 +72,11 @@ export class AppComponent {
     )
   }
 
-  buildNodes() {
-    if (this.schemasHandler) {
-      this.schemasHandler.independentSchemas.forEach(sch => {
-        var astBuilder = new CppSchemaBuilderVisitor()
-        var node = astBuilder.buildObject(sch)
-        if (node) {
-          this.independentNodes.push(node)
-        }
 
-      })
-
-      this.schemasHandler.dependentSchemas.forEach(sch => {
-        var astBuilder = new CppSchemaBuilderVisitor()
-        var cppGenerator = new CppSchemaGeneratorVisitor()
-        var node = astBuilder.buildObject(sch)
-        if (node) {
-          this.dependentNodes.push(node)
-        }
-      })
-    }
-
+  languageSelected(event:any){
+    console.log('language', event)
   }
-
-  convertNodes() {
-    var result = ''
-
-    result = result.concat('#include <string>\n')
-    result = result.concat('#include "nlohmann/json.hpp"\n\n')
-
-    result = result.concat('using json = nlohmann::json;\n\n')
-
-    var cppGenerator = new CppSchemaGeneratorVisitor()
-    this.independentNodes.forEach(node => {
-      result = result.concat(cppGenerator.visitNode(node))
-      result = result.concat('\n\n')
-    })
-
-    this.dependentNodes.forEach(node => {
-      result = result.concat(cppGenerator.visitNode(node))
-      result = result.concat('\n\n')
-    })
-
-    return result
-  }
+  
   onFileChanged(event: any) {
     var selectedFile = event.target.files[0];
     const fileReader = new FileReader();
@@ -138,7 +91,6 @@ export class AppComponent {
           await this.parseYamlContent()
 
           this.documentContent = JSON.parse(JSON.stringify(this.parsedDocument.document._json))//parsed.document._json
-          //JSON.parse(JSON.stringify(
         }
 
       }
@@ -148,23 +100,22 @@ export class AppComponent {
     }
   }
 
-  async parseYamlContent(){
+  async parseYamlContent() {
     this.parsedDocument = await parser.parse(this.yamlContent)
     console.log('parsed content', this.parsedDocument)
 
     this.apiDocument = this.parsedDocument.document
     this.schemasHandler = new SchemasHandler(this.apiDocument!.components().schemas())
     this.channelsHandler = new ChannelsHandler(this.apiDocument!.allChannels())
-    this.metainfoHandler = new InitialMetainfoHandler(this.metainfoContent)
-    this.buildNodes()
-    this.topicsContent = this.channelsHandler?.buildTopics()
-    this.communicationLayerContent = this.channelsHandler?.buildCommunicationLayer()!
-    this.communicationLayerImplContent = this.channelsHandler?.buildCommunicationLayerImpl()!
+
+    this.topicsContent = this.channelsHandler?.generateTopics()
+    this.communicationLayerContent = this.channelsHandler?.generateCommunicationLayer()!
+    this.communicationLayerImplContent = this.channelsHandler?.generateCommunicationLayerImpl()!
     this.documentContent = JSON.parse(JSON.stringify(this.parsedDocument.document._json))
-    this.definitionsContent = this.convertNodes()
+    this.definitionsContent = this.schemasHandler.generateDefinitions()
   }
 
-  definitionsClicked(){
+  definitionsClicked() {
     var item = new CodeListItemComponent()
     item.content = this.definitionsContent
     item.label = 'definitions'
@@ -187,7 +138,6 @@ export class AppComponent {
 
   topicsClicked() {
     var item = new CodeListItemComponent()
-    //item.content = this.channelsHandler?.buildTopics()!
     item.content = this.topicsContent
     item.label = 'topics'
     this.addItemSubject.next(item)
@@ -195,8 +145,6 @@ export class AppComponent {
 
   communicationLayerClicked() {
     var item = new CodeListItemComponent()
-    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    //item.content =this.channelsHandler?.buildCommunicationLayer()!
     item.content = this.communicationLayerContent
     item.label = 'communication-layer'
     this.addItemSubject.next(item)
@@ -204,8 +152,6 @@ export class AppComponent {
 
   communicationLayerImplClicked() {
     var item = new CodeListItemComponent()
-    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    //item.content = this.channelsHandler?.buildCommunicationLayerImpl()!
     item.content = this.communicationLayerImplContent
     item.label = 'communication-layer-impl'
     this.addItemSubject.next(item)
@@ -213,24 +159,22 @@ export class AppComponent {
 
   simulatedServerClicked() {
     var item = new CodeListItemComponent()
-    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    //item.content = this.channelsHandler?.buildCommunicationLayerImpl()!
     item.content = this.simulatedServerContent
     item.label = 'simulated-server'
     this.addItemSubject.next(item)
   }
 
-  allItemsClicked(event:any) {
+  allItemsClicked(event: any) {
     console.log('button group', event)
   }
 
-  groupChanged(event:any){
+  groupChanged(event: any) {
     console.log('event', event)
-    if(event.source?.value == 'all'){ 
-      if(event.source?._checked){
+    if (event.source?.value == 'all') {
+      if (event.source?._checked) {
         this.selected.clear()
         this.clearSubject.next()
-        this.maxSelecteds.forEach( s => this.selected.add(s))
+        this.maxSelecteds.forEach(s => this.selected.add(s))
         this.definitionsClicked()
         this.conversionFunctionsClicked()
         this.metainfoClicked()
@@ -243,7 +187,7 @@ export class AppComponent {
         this.clearSubject.next()
       }
     } else {
-      if(this.selected.has(event.source?.value)){
+      if (this.selected.has(event.source?.value)) {
         this.selected.delete(event.source?.value)
         this.selected.delete('all')
       } else {
@@ -295,7 +239,6 @@ export class AppComponent {
   }
 
   exportTopics() {
-    //const data = this.channelsHandler?.buildTopics()!
     const data = this.topicsContent
     const blob = new Blob([data], {
       type: 'application/octet-stream'
@@ -309,8 +252,6 @@ export class AppComponent {
   }
 
   exportCommunicationLayer() {
-    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    //const data = this.channelsHandler?.buildCommunicationLayer()!
     const data = this.communicationLayerContent
     const blob = new Blob([data], {
       type: 'application/octet-stream'
@@ -320,13 +261,11 @@ export class AppComponent {
     a.href = fileUrl
     a.download = "communication-layer.cpp"
     a.click();
-    URL.revokeObjectURL(fileUrl); 
-    
+    URL.revokeObjectURL(fileUrl);
+
   }
 
   exportCommunicationLayerImpl() {
-    //this.channelsHandler?.buildTopics() // para criar os nomes dos topicos
-    //const data = this.channelsHandler?.buildCommunicationLayerImpl()!
     const data = this.communicationLayerImplContent
     const blob = new Blob([data], {
       type: 'application/octet-stream'
@@ -353,9 +292,9 @@ export class AppComponent {
     URL.revokeObjectURL(fileUrl);
   }
 
-  export(event: CodeListItemComponent){
+  export(event: CodeListItemComponent) {
     console.log('event label')
-    switch(event.label){
+    switch (event.label) {
       case 'definitions':
         this.exportDefinitions()
         break
@@ -383,7 +322,7 @@ export class AppComponent {
     }
   }
 
-  exportToZip(){
+  exportToZip() {
     var zip = new JSZip();
     zip.file("definitions.cpp", this.definitionsContent);
     zip.file("conversion-functions.cpp", this.conversionFunctionsContent);
@@ -392,8 +331,8 @@ export class AppComponent {
     zip.file("communication-layer.cpp", this.communicationLayerContent);
     zip.file("communication-layer-impl.cpp", this.communicationLayerImplContent);
     zip.file("simulated-server.cpp", this.simulatedServerContent);
-    zip.generateAsync({ type: 'blob' }).then( content => {
-      if(content){
+    zip.generateAsync({ type: 'blob' }).then(content => {
+      if (content) {
         const blob = new Blob([content], {
           type: 'application/octet-stream'
         });
