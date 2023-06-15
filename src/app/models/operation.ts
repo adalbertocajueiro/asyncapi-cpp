@@ -7,11 +7,11 @@ export enum OperationType {
 export class AsyncOperation {
     operationType!:OperationType
     operationName!:string
-    message?:Schema
+    payload?:Schema
 
-    constructor(opType:OperationType, opName:string, msg?:Schema){
+    constructor(opType:OperationType, opName:string, pld?:Schema){
         this.operationType = opType
         this.operationName = opName
-        this.message = msg
+        this.payload = pld
     }
 }

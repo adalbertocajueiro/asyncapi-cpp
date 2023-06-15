@@ -21,6 +21,7 @@ export class ChannelsHandler {
         this.channels.forEach(channel => {
             this.topicsNodes.push(this.channelBuilder?.buildNode(channel))
         })
+        //console.log('topics nodes',this.topicsNodes)
     }
 
     generateTopics() {
@@ -67,6 +68,6 @@ export class ChannelsHandler {
     }
 
     generateCommunicationLayerImpl() {
-        return this.channelGenerator?.generateCommunicationLayerImpl()
+        return this.channelGenerator?.generateCommunicationLayerImpl(this.topicsNodes)
     }
 }

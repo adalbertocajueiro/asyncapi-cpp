@@ -61,7 +61,7 @@ export class CppChannelGeneratorVisitor {
         return result
     }
 
-    generateCommunicationLayerImpl(){
+    generateCommunicationLayerImpl(topicsNodes:any[]){
 
         var result = ''
         result = result.concat('#include "communication-layer.cpp"')
@@ -75,6 +75,11 @@ export class CppChannelGeneratorVisitor {
             var methodName = 'void handle_' + topic.toLowerCase() + '(const struct mosquitto_message *message)'
             result = result.concat(indent(2) + methodName + newLine())
             result = result.concat(indent(2) + '{' + newLine())
+            //console.log('topicsNodes:',topicsNodes.map( tn => tn.topicName.toLowerCase().replaceAll('/','_'))),
+            //console.log('topic to find', topic.toLocaleLowerCase())
+            var topicNode = topicsNodes.find(tn => topic.toLowerCase().includes(tn.topicName.toLowerCase().replaceAll('/', '_')))
+            //console.log('node found', topicNode)
+            result = result.concat(indent(4) + topicNode.subscribe.payload.id() + '::from_json_string((char *)message->payload);' + newLine())
             result = result.concat(indent(4) + '//TODO implement your business code' + newLine())
             result = result.concat(indent(4) + 'std::cout << "handle_' + topic.toLowerCase() + '" << std::endl;' + newLine())
             result = result.concat(indent(2) + '}' + newLine())

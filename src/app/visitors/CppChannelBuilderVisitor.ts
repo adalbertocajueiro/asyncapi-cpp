@@ -25,6 +25,7 @@ export class CppChannelBuilderVisitor {
         var messages = operation.messages()
         if(messages){
             var message = messages[0]
+            //console.log('payload of ', opId, message.payload()?.id())
             result = new AsyncOperation(opType,opId,message.payload())
         }
         
