@@ -2,17 +2,38 @@ asyncapi: '2.6.0'
 id: 'urn:example:es:us:edscorbot:mqtt-server'
 
 info:
-  title: Streetlights Kafka API
-  version: '1.0.0'
-  description: |
-    The Smartylighting Streetlights API allows you to remotely manage the city lights.
-    ### Check out its awesome features:
-    * Turn a specific streetlight on/off 🌃
-    * Dim a specific streetlight 😎
-    * Receive real-time information about environmental lighting conditions 📈
+  title: ES Scorbot Async API V2
+  version: 1.0.0
+  description: >
+    The EDScorbot asynchronous service specification for controlling the robotic arm hosted in University of Seville. 
+
+
+    #### Some useful links
+
+    * [Ed Scorbot Python](https://github.com/RTC-research-group/Py-EDScorbotTool) - the main Github project with details about the entire project and the low level code to control the robotic arm
+
+    * [Ed Scorbot Documentation](https://py-edscorbottool.readthedocs.io/en/latest/) - documentation about the entire project
+
+    * [EDScorbot Simulated Server](https://github.com/adalbertocajueiro/edscorbot-c-cpp) - a C/C++ microservice of a simulated arm controller adherent to this specification
+
+    * [EDScorbot Web Application](https://github.com/adalbertocajueiro/edscorbot-angular) - the Web application of the EDScorbot project, implementad in Angular and adherent to this specification
+
+ 
+    #### Symbology
+
+    * **CONTROLLER** - Arm's high level controller. The microservice service responsible for receiving messages from **CLIENTS**, handling the physical arm and notifying **CLIENTS**. It guarantees the arm works according to its requirements.
+
+    * **CLIENT** = Any application that wants to interact with the arm. In our case, this application is a Web application to provide a friendly user experience to the final user (human).
+
+    * **CONTROLLER** and **CLIENT** can be publishers and subscribers at the same time. For each arm there is only one **CONTROLLER** and possibly many **CLIENTS**. The **CONTROLLER** is responsible for guaranteeing the correct funcioning of the arm in a scenario where many **CLIENTS** want to use the robotic arm. The arm accepts only one **CLIENT** at a time (which becomes the arm's owner). Other clients can use the arm only when the arm is free (there is no current owner).
+
+  termsOfService: https://asyncapi.org/terms/
+  contact:
+    name: Adalberto Cajueiro de Farias
+    email: adalberto@computacao.ufcg.edu.br
   license:
     name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
 servers:
   mosquitto:
     url: 192.168.1.104
