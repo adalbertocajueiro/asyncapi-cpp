@@ -10,10 +10,12 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSelectModule } from '@angular/material/select';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { CodeListComponent } from './components/code-list/code-list.component';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
 import { HeaderComponent } from './components/header/header.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -26,12 +28,15 @@ import { HeaderComponent } from './components/header/header.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatIconModule,
     MatTooltipModule,
     MatChipsModule,
+    MatSelectModule,
     NgxJsonViewerModule
   ],
   providers: [],

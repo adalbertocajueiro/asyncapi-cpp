@@ -8,6 +8,9 @@ import { Subject } from 'rxjs';
 import { CodeListItemComponent } from './components/code-list-item/code-list-item.component';
 import JSZip from 'jszip';
 import { MatChipOption } from '@angular/material/chips';
+import { FormControl } from '@angular/forms';
+import { Channels } from '@asyncapi/parser/esm/models/v2/channels';
+import { MatSelectChange } from '@angular/material/select';
 
 const parser = new Parser();
 
@@ -36,6 +39,10 @@ export class AppComponent {
   communicationLayerContent: any
   communicationLayerImplContent: any
   simulatedServerContent: any
+
+  formChannels = new FormControl('');
+  allChannels?:Channels
+  selectedChannels?:Channels
 
   selectedLanguage: 'cpp' | 'js' = 'cpp'
 
@@ -112,14 +119,41 @@ export class AppComponent {
     console.log('parsed content', this.parsedDocument)
 
     this.apiDocument = this.parsedDocument.document
+    this.allChannels = this.apiDocument!.allChannels()
+    this.selectedChannels = this.apiDocument!.allChannels()
     this.schemasHandler = new SchemasHandler(this.apiDocument!.components().schemas())
-    this.channelsHandler = new ChannelsHandler(this.apiDocument!.allChannels())
+    this.channelsHandler = new ChannelsHandler(this.selectedChannels)
 
     this.topicsContent = this.channelsHandler?.generateTopics()
     this.communicationLayerContent = this.channelsHandler?.generateCommunicationLayer()!
     this.communicationLayerImplContent = this.channelsHandler?.generateCommunicationLayerImpl()!
     this.documentContent = JSON.parse(JSON.stringify(this.parsedDocument.document._json))
     this.definitionsContent = this.schemasHandler.generateDefinitions()
+  }
+
+  generateAllCode(){
+    this.selected.clear()
+    this.clearSubject.next()
+    this.topicsContent = this.channelsHandler?.generateTopics()
+    this.communicationLayerContent = this.channelsHandler?.generateCommunicationLayer()!
+    this.communicationLayerImplContent = this.channelsHandler?.generateCommunicationLayerImpl()!
+    this.documentContent = JSON.parse(JSON.stringify(this.parsedDocument.document._json))
+    this.definitionsContent = this.schemasHandler?.generateDefinitions()
+  }
+  selectionChange(event:MatSelectChange){
+    var setChannels = new Set(event.value)
+    while(this.selectedChannels!.length > 0){
+      this.selectedChannels?.pop()
+    }
+    if (this.apiDocument){
+      this.apiDocument.allChannels().forEach (c => {
+        if(setChannels.has(c.id())){
+          this.selectedChannels?.push(c)
+        }
+      })
+    }
+    this.channelsHandler = new ChannelsHandler(this.selectedChannels!)
+    this.generateAllCode()
   }
 
   definitionsClicked() {
@@ -171,12 +205,9 @@ export class AppComponent {
     this.addItemSubject.next(item)
   }
 
-  allItemsClicked(event: any) {
-    console.log('button group', event)
-  }
 
   groupChanged(event: any) {
-    console.log('event', event)
+    //console.log('event', event)
     if (event.source?.value == 'all') {
       if (event.source?._checked) {
         this.selected.clear()

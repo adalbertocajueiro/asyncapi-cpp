@@ -43,7 +43,21 @@
           
         </div>
         <div class="right-panel">
-          <span>Choose elements to see the generated code</span>
+          <div class="select-label">
+            <mat-form-field>
+              <mat-label>Choose channels</mat-label>
+              <mat-select [formControl]="formChannels" multiple (selectionChange)="selectionChange($event)">
+                <mat-select-trigger>
+                  {{formChannels.value?.[0] || ''}}
+                  <span *ngIf="(formChannels.value?.length || 0) > 1" class="example-additional-selection">
+                    (+{{(formChannels.value?.length || 0) - 1}} {{formChannels.value?.length === 2 ? 'other' : 'others'}})
+                  </span>
+                </mat-select-trigger>
+                <mat-option *ngFor="let topic of allChannels" [value]="topic.id()">{{topic.id()}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <span>Choose elements to see the generated code</span>
+          </div>
           <mat-button-toggle-group appearance="legacy" name="fontStyle" 
             aria-label="Font Style" multiple
             (change)="groupChanged($event)">
