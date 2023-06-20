@@ -55,9 +55,11 @@ int main(int argc, char *argv[])
 		//subscribe on all relevant topics
         subscribe_all_topics();
 
-		//publishes the metainfo of the robot
-		//MetaInfoObject mi = initial_metainfo();
-		//publish_message(METAINFO_TOPIC,mi.to_json().dump().c_str());
+		//publishes the metainfo of the robot. dependent code (business)
+		MetaInfoObject mi = initial_metainfo();
+		mi.signal = ARM_METAINFO;
+		mi.name = "ROBOT_NAME";
+		publish_message(METAINFO_TOPIC,mi.to_json().dump().c_str());
 		std::cout << std::endl
 				  << std::endl
 				  << "Server ready to send/receive messages "

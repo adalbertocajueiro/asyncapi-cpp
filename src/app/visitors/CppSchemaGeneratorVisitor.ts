@@ -348,7 +348,17 @@ export class CppSchemaGeneratorVisitor {
                 //se o tipo do atributo nao necessita conversao entao preenche direto
                 //console.log('ITEM ', att)
                 if (isPrimitive(att.attType)) {
-                    result = result.concat(indent(indentLevel) + 'result.' + att.attName + ' = json_obj["' + att.attName + '"];')
+                    if(att.attType == 'boolean'){
+                        result = result.concat(indent(indentLevel) + 'if(!json_obj["' + att.attName + '"].is_null())' + newLine())
+                        result = result.concat(indent(indentLevel) + '{' + newLine())
+                        indentLevel = indentLevel + 2
+                        result = result.concat(indent(indentLevel) + 'result.' + att.attName + ' = json_obj["' + att.attName + '"];' + newLine())
+                        indentLevel = indentLevel - 2
+                        result = result.concat(indent(indentLevel) + '}' + newLine())
+                    } else {
+                        result = result.concat(indent(indentLevel) + 'result.' + att.attName + ' = json_obj["' + att.attName + '"];')
+                    }
+                    
                 } else {
                     //verificar necessidade de ver se campo existe 
                     //if (json_obj.contains("point")) por exemplo ????
