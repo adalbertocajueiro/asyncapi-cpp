@@ -1,4 +1,5 @@
 #include <signal.h>
+#include <unistd.h>
 #include "communication-layer-impl.cpp"
 
 
