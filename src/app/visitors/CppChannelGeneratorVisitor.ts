@@ -79,10 +79,49 @@ export class CppChannelGeneratorVisitor {
             //console.log('topic to find', topic.toLocaleLowerCase())
             var topicNode = topicsNodes.find(tn => topic.toLowerCase().includes(tn.topicName.toLowerCase().replaceAll('/', '_')))
             //console.log('node found', topicNode)
-            result = result.concat(indent(4) + topicNode.subscribe.payload.id() + '::from_json_string((char *)message->payload);' + newLine())
-            result = result.concat(indent(4) + '//TODO implement your business code' + newLine())
-            result = result.concat(indent(4) + 'std::cout << "handle_' + topic.toLowerCase() + '" << std::endl;' + newLine())
+            result = result.concat(indent(4) + 'if ((char *)message->payload != NULL)')
+            result = result.concat(indent(4) + '{' + newLine())
+
+            var objType = topicNode.subscribe.payload.id()
+            result = result.concat(indent(6) + 'try' + newLine())
+            result = result.concat(indent(6) + '{' + newLine()) 
+
+            result = result.concat(indent(8) + objType + '::from_json_string((char *)message->payload);' + newLine())
+            result = result.concat(indent(8) + '//TODO implement your business code' + newLine())
+            result = result.concat(indent(8) + 'std::cout << "handle_' + topic.toLowerCase() + '" << std::endl;' + newLine())
+
+            result = result.concat(indent(6) + '}' + newLine())
+            result = result.concat(indent(6) + 'catch (std::exception& e)' + newLine())
+            result = result.concat(indent(6) + '{' + newLine()) 
+            result = result.concat(indent(8) + 'std::cout << "Unable to build ' + objType + ' from message (' + topic.toLowerCase() + '): " <<  (char *)message->payload << std::endl;' + newLine()) 
+            result = result.concat(indent(6) + '}' + newLine())
+
+            result = result.concat(indent(4) + '}' + newLine())
+            result = result.concat(indent(4) + 'else' + newLine())
+            result = result.concat(indent(4) + '{' + newLine())
+            result = result.concat(indent(6) + 'std::cout << "message received on ' +  topic.toLowerCase() + ' has no payload" << std::endl;' + newLine())
+            result = result.concat(indent(4) + '}' + newLine())
+            
             result = result.concat(indent(2) + '}' + newLine())
+            /**
+             * 
+             * if ((char *)message->payload != NULL){
+      try
+      {
+        Client::from_json_string((char *)message->payload);
+        //TODO implement your business code
+        std::cout << "handle_robot_name_get_status_topic" << std::endl;
+      }
+      catch (std::exception& e)
+      {
+        std::cout << "Unable to build Client from message (robot_name_get_status_topic): " <<  (char *)message->payload << std::endl;
+      }
+    }
+    else
+    {
+      std::cout << "message received on robot_name_get_status_topic has no payload" << std::endl; 
+    }
+             * */
         })
         result = result.concat('};')
 
